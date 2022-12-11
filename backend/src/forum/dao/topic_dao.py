@@ -93,17 +93,9 @@ class TopicDao:
             f"GROUP BY thread_id) "
             f"SELECT topic_id,topic_name,description, "
             f"COUNT(thread_id) AS threads_count, SUM(post_count) AS posts_count "
-            f"FROM topics JOIN threadpost ON threadpost.topic=topics.topic_id "
+            f"FROM topics LEFT JOIN threadpost ON threadpost.topic=topics.topic_id "
             f"GROUP BY topic_id,topic_name,description"
             # ,{"topic_id": topic_id},
         ).fetchall()
 
-        print(type(result))
-        # res = dict(result)
-        # print(res)
-        # print(type(res))
-        # for row in result:
-        #    print(row)
-
-        # return BasicDao.safe_commit()
         return result

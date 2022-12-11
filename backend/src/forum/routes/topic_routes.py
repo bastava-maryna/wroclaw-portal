@@ -174,31 +174,16 @@ class TopicNameApi(Resource):
     # @jwt_required()
     def get(self, name):
         "get topic by name"
-        # voivodeship = Voivodeship.objects.get(name=name).to_json()
-        # if voivodeship:
-        #     return Response(voivodeship, mimetype="application/json", status=200)
-        # return {"message": "Uni not found"}, 404
+
         topic = Topic.objects.get(name=name).to_json()
         return Response(topic, mimetype="application/json", status=200)
 
     def put(self, name):
-        # data = Uni.parser.parse_args()
-        # voivodeship = Voivodeship.objects.get(name=name)
-        # if voivodeship is None:
-        #    voivodeship = voivodeship(name, data["terc"])
-        # else:
-        #    voivodeship.terc = data["terc"]
-        # voivodeship.save_to_db()
-
         body = request.get_json()
         Topic.objects.get(name=name).update(**body)
         return "", 200
 
     def delete(self, name):
-        # voivodeship = Voivodeship.objects.get(name=name)
-        # if voivodeship:
-        #    voivodeship.delete()
-        # return {"message": "Uni deleted"}
 
         topic = Topic.objects.get(name=name).delete()
         return "", 200
@@ -238,21 +223,7 @@ class TopicsApi(Resource):
         """
 
     def post(self):
-        # if Voivodeship.objects.get(name=name):
-        #    return {
-        #        "message": "A voivodeship with name '{} already exists.".format(name)
-        #    }, 400
 
-        # data = Uni.parser.parse_args()
-
-        # uni = UniModel(name, data["price"])
-
-        # try:
-        #    uni.save_to_db()
-        # except:
-        #    return {"message": "An error occured inserting the item"}, 500
-
-        # return uni.json(), 201
         """
         Create a new discipline.
         :return: A response object for the POST API request.
@@ -332,17 +303,9 @@ class TopicsInfoApi(Resource):
         """
         print("in routes///////////////////")
         topic_info = {}
-        # topics: list = TopicDao.get_topics()
-        topics: list = TopicDao.get_topics_info()
-        print(type(topics))
-        print(topics)
-        # for topic in topics:
-        #    topic.add(555)
-        #    threads_count = ThreadDao.get_threads_count(topic.topic_id)
-        # topic_info["topic_id"] = threads_count
-        # topic_info["topic_id"] = topics(3)
 
-        print(type(topics))
+        topics: list = TopicDao.get_topics_info()
+
         res = topics_schema.dump(topics)
         print(res)
         return topics
