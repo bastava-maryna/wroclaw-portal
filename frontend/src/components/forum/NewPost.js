@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { getSelectedBlock } from 'draftjs-utils';
 import htmlToDraft from 'html-to-draftjs';
 import { List } from 'immutable';
-import axios from 'axios';
 import { EditorState, convertToRaw, Modifier } from 'draft-js';
 import { Form, Icon, Button } from 'semantic-ui-react';
 import './style.css';
@@ -57,8 +56,7 @@ export default class NewPost extends Component {
 */
   onSubmit = () => {
     const { editorState } = this.state;
-    const { threadID, createPost, thread, authenticatedUser, dispatch } =
-      this.props;
+    const { threadID, createPost, authenticatedUser, dispatch } = this.props;
     console.log('print threadID from props');
     console.log(threadID);
     const content = JSON.stringify(

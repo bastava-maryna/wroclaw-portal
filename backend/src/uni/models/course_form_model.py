@@ -39,9 +39,6 @@ class CourseForm(db.Base):
 class CourseFormSchema(ma.Schema):
     class Meta:
         model = CourseForm
-        # sqla_session = db.session
-        # load_instance = True
-        # fields = ["level"]
 
 
 course_form_schema = CourseFormSchema()

@@ -1,13 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import Dropzone from 'react-dropzone';
-import {
-  Form,
-  Image,
-  Message,
-  Button,
-  TextArea,
-  Grid,
-} from 'semantic-ui-react';
+import { Form, Image, Message, Button, Grid } from 'semantic-ui-react';
 import { imageUploadApi } from '../forum/ImageUploader';
 import AuthContext from '../../context/auth/AuthContext';
 import { editProfile } from '../../context/auth/AuthActions';
@@ -140,7 +133,11 @@ const EditProfile = ({ isLoading, error, editSuccess }) => {
     />
   );
 
-  const avatarURL = values.avatarFile ? values.avatarFile.preview : avatar;
+  const avatarURL = values.avatarFile
+    ? values.avatarFile.preview
+    : avatar
+    ? avatar
+    : ' https://i.imgur.com/7o5cwt8.png';
 
   return (
     <div>
@@ -175,6 +172,7 @@ const EditProfile = ({ isLoading, error, editSuccess }) => {
                   }}
                 </Dropzone>
               )}
+              <label>Tap to choose anoter avatar</label>
             </Form.Field>
           </Grid.Column>
           <Grid.Column>

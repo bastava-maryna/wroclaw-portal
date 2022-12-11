@@ -7,7 +7,6 @@ from typing import List
 from src.uni.dao.basic_dao import BasicDao
 from src.forum.models.thread_model import Thread
 from src.user.user_model import User
-from src.forum.models.post_model import Post
 
 
 class ThreadDao:
@@ -29,8 +28,6 @@ class ThreadDao:
         :param thread_id: The unique identifier for a thread.
         :return: The result of the query.
         """
-        res = Thread.query.filter_by(thread_id=thread_id).first()
-        print(res)
 
         return Thread.query.filter_by(thread_id=thread_id).first()
 
@@ -59,10 +56,8 @@ class ThreadDao:
             .first()
         )
         """
-        res = Thread.query.join(User).filter(thread_id == thread_id).first()
-        print(res)
-        return res
-        # return Thread.query.join(User).filter(thread_id == thread_id).first()
+
+        return Thread.query.join(User).filter(thread_id == thread_id).first()
 
     @staticmethod
     def get_thread_by_name(thread_name: str) -> Thread:
@@ -160,122 +155,4 @@ class ThreadDao:
             .all()
         )
 
-        # res = (
-        #    db.session.query(Thread, User)
-        #    .filter_by(topic=topic_id)
-        #    .join(User, Thread.thread_creator == User.user_id)
-        #    .add_columns(Thread.thread_id, Thread.thread_name, User.user_name)
-        # .order_by(Thread.thread_created_at)
-        #    .all()
-        # )
-        print(result)
-        # for r in res:
-        #    print(r)
-        #    print(r.Thread.thread_id)
-
         return result
-
-    @staticmethod
-    def get_threads_by_topic2(topic_id: int) -> list:
-        """
-        Retrieve all the threads of one topic in the database by topic id with thread_creator info and posts number by thread.
-        :param topic_id: The unique identifier for a topic.
-        :return: The result of the query.
-        """
-        result = (
-            db.session.execute(
-                f"WITH threadpost AS "
-                f"(SELECT topic, thread_id, count(post_id) AS post_count "
-                f"FROM threads LEFT JOIN posts ON thread_id=thread GROUP BY thread_id) "
-                f"SELECT threads.thread_id,thread_name, thread_created_at, thread_creator, "
-                f"thread_content,pinned,threads.topic ,post_count, u1.user_name AS thread_creator_name "
-                f"FROM threads "
-                f"JOIN threadpost ON threadpost.thread_id=threads.thread_id "
-                f"JOIN users AS u1 ON u1.user_id=thread_creator "
-                f"WHERE topic=:topic_id "
-                f"ORDER BY thread_created_at DESC",
-                {"thread_id": topic_id},
-            )
-            .mappings()
-            .all()
-        )
-
-        # res = (
-        #    db.session.query(Thread, User)
-        #    .filter_by(topic=topic_id)
-        #    .join(User, Thread.thread_creator == User.user_id)
-        #    .add_columns(Thread.thread_id, Thread.thread_name, User.user_name)
-        # .order_by(Thread.thread_created_at)
-        #    .all()
-        # )
-        print(result)
-        # for r in res:
-        #    print(r)
-        #    print(r.Thread.thread_id)
-
-        return result
-
-    @staticmethod
-    def get_threads_by_topic1(topic_id: int) -> list:
-        """
-        Retrieve all the threads of one topic in the database by topic id.
-        :param topic_id: The unique identifier for a topic.
-        :return: The result of the query.
-        """
-        result = (
-            db.session.execute(
-                f"WITH threadpost AS "
-                f"(SELECT topic, thread_id, count(post_id) AS post_count "
-                f"FROM threads LEFT JOIN posts ON thread_id=thread GROUP BY thread_id) "
-                f"SELECT g.*, u1.user_name AS thread_creator_name, u2.user_name AS post_creator_name, post_count "
-                f"FROM "
-                f"(SELECT p.*, thread_name, thread_created_at, thread_creator, thread_content,pinned,topic "
-                f"FROM threads LEFT JOIN"
-                f"(SELECT post_id, post_created_at, post_creator, thread AS thread_id, "
-                f"row_number() OVER (PARTITION BY thread ORDER BY post_created_at DESC) AS rn "
-                f"FROM posts) AS p "
-                f"ON threads.thread_id=p.thread_id where rn=1 or rn IS NULL) AS g "
-                f"JOIN threadpost ON threadpost.thread_id=g.thread_id "
-                f"LEFT JOIN users AS u1 ON u1.user_id=g.thread_creator "
-                f"LEFT JOIN users AS u2 ON u2.user_id=g.post_creator "
-                f"WHERE g.topic={topic_id} "
-                f"ORDER BY post_created_at DESC"
-            )
-            .mappings()
-            .all()
-        )
-
-        # res = (
-        #    db.session.query(Thread, User)
-        #    .filter_by(topic=topic_id)
-        #    .join(User, Thread.thread_creator == User.user_id)
-        #    .add_columns(Thread.thread_id, Thread.thread_name, User.user_name)
-        # .order_by(Thread.thread_created_at)
-        #    .all()
-        # )
-        print(result)
-        # for r in res:
-        #    print(r)
-        #    print(r.Thread.thread_id)
-
-        return result
-
-
-"""
-f"WITH threadpost AS "
-                f"(SELECT topic, thread_id, count(post_id) AS post_count "
-                f"FROM threads JOIN posts ON thread_id=thread GROUP BY thread_id) "
-                f"SELECT g.*, u1.user_name AS thread_creator_name, u2.user_name AS post_creator_name, post_count "
-                f"FROM "
-                f"(SELECT p.*, thread_name, thread_created_at, thread_creator, thread_content,pinned,topic "
-                f"FROM "
-                f"(SELECT post_id, post_created_at, post_creator, thread AS thread_id, "
-                f"row_number() OVER (PARTITION BY thread ORDER BY post_created_at DESC) AS rn "
-                f"FROM posts) AS p "
-                f"JOIN threads ON threads.thread_id=p.thread_id where rn=1) AS g "
-                f"JOIN threadpost ON threadpost.thread_id=g.thread_id "
-                f"JOIN users AS u1 ON u1.user_id=g.thread_creator "
-                f"JOIN users AS u2 ON u2.user_id=g.post_creator "
-                f"WHERE g.topic={topic_id} "
-                f"ORDER BY post_created_at DESC"
-"""

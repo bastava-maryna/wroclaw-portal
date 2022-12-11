@@ -26,7 +26,9 @@ const TopicThreadList = ({ isLoading, error, threads, topic }) => {
     <div className="forumContainer">
       <Segment.Group className="forum-list">
         {threads.map((thread) => {
-          return <BaseThread key={thread.thread_id} thread={thread} />;
+          return (
+            <BaseThread key={thread.thread_id} thread={thread} topic={topic} />
+          );
         })}
       </Segment.Group>
     </div>

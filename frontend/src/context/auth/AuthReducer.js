@@ -48,6 +48,13 @@ const authReducer = (state, action) => {
         ...state,
         isLoading: true,
       };
+    case 'RESET':
+      return {
+        ...state,
+        isLoading: false,
+        newThreadSuccess: false,
+        newPostLoading: false,
+      };
     case 'LOGIN_ERROR':
       return {
         ...state,
@@ -145,8 +152,6 @@ const authReducer = (state, action) => {
         newThreadContent: action.newThread.thread_content,
       };
     case 'CREATE_THREAD_SUCCESS':
-      console.log('action payload');
-      console.log(action);
       return {
         ...state,
         newThreadLoading: false,
@@ -183,6 +188,8 @@ const authReducer = (state, action) => {
         ...state,
         isDeleting: false,
         deleteError: null,
+        //newThreadId: null,
+        name: null,
       };
     case 'DELETE_THREAD_FAILURE':
       return {
@@ -190,7 +197,17 @@ const authReducer = (state, action) => {
         isDeleting: false,
         deleteError: action.error,
       };
-
+    case 'FETCH_TOPIC_REQUEST':
+      return {
+        ...state,
+        newThreadLoading: false,
+        newThreadSuccess: false,
+        newThreadId: null,
+        newThreadError: null,
+        newThreadShow: false,
+        isLoading: true,
+        error: null,
+      };
     case 'FETCH_TOPIC_SUCCESS':
       return {
         ...state,
@@ -198,7 +215,7 @@ const authReducer = (state, action) => {
         name: action.name,
         //slug: action.slug,
         //description: action.description,
-        //threads: action.threads,
+        threads: action.threads,
         error: null,
       };
     case 'FETCH_TOPIC_FAILURE':
@@ -239,22 +256,36 @@ const authReducer = (state, action) => {
         ...state,
         deletePostList: state.deletePostList.filter((id) => id !== action.id),
       };
+    case 'FETCH_THREAD_REQUEST':
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
     case 'FETCH_THREAD_SUCCESS':
-      console.log('in fetch_thread_success,action');
-      console.log(action);
       return {
         ...state,
         isLoading: false,
         curThread: action.thread,
+        //curThread: action.payload,
+        name: action.thread ? action.thread.thread_name : null,
+        //thread_name: action.payload.thread_name,
         //name: action.thread.name,
         //content: action.thread.content,
         //pinned: action.thread.pinned,
         //creator: action.thread.creator,
         //createdAt: action.thread.created_at,
-        posts: action.thread,
+        //posts: action.thread,
         error: null,
       };
+    case 'FETCH_THREAD__POST_SUCCESS':
+      return {
+        ...state,
+        posts: action.posts,
+      };
     case 'FETCH_THREAD_FAILURE':
+      console.log('error in delete thread reducer');
+      console.log(action);
       return {
         ...state,
         isLoading: false,

@@ -16,8 +16,6 @@ class Voivodeship(db.Base):
     def __init__(self, voivodeship: dict):
         self.voiv_name = voivodeship.get("voiv_name")
 
-    # def json(self):
-    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the voivodeship.

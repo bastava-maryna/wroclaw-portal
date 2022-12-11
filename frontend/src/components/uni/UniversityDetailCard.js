@@ -9,6 +9,7 @@ import UnivercityContext from '../../context/uni/UnivercityContext';
 import CourseCard from './CourseCard';
 
 const UniversityDetailCard = (props) => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const { level, discipline, search } = useContext(UnivercityContext);
   const [uni, setUni] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -16,9 +17,9 @@ const UniversityDetailCard = (props) => {
 
   useEffect(() => {
     const fetchUni = async () => {
-      const { data } = await axios.get(`http://127.0.0.1:5000/unis/uid/${id}`);
+      const { data } = await axios.get(`${API_URL}/uni/unis/uid/${id}`);
 
-      setUni(data);
+      setUni(data.uni);
     };
 
     fetchUni();
@@ -38,7 +39,7 @@ const UniversityDetailCard = (props) => {
         )
       );
       const { data } = await axios.get(
-        `http://127.0.0.1:5000/search/courses?${params}`
+        `${API_URL}/uni/search/courses?${params}`
       );
 
       setCourses(data);

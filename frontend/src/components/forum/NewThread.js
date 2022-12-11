@@ -54,20 +54,6 @@ export default class NewThread extends Component {
     this.props.toggleShowEditor();
   };
 
-  //????
-  onSave = () => {
-    // save to redux store (uncontrolled input way)
-    const { thread_name, editorState } = this.state;
-    const thread_content = JSON.stringify(
-      convertToRaw(editorState.getCurrentContent())
-    );
-    this.props.updateNewThread({
-      thread_name: thread_name,
-      thread_content: thread_content,
-    });
-    this.toggleShowEditor();
-  };
-
   onCancel = () => {
     // reset & clear everything
     const editorState = EditorState.createEmpty();
@@ -251,16 +237,7 @@ export default class NewThread extends Component {
             <Icon name="edit" />
             Post thread
           </Button>
-          <Button
-            color="red"
-            role="none"
-            size="small"
-            disabled={isLoading}
-            onClick={this.onSave}
-          >
-            <Icon name="save" />
-            Save Draft
-          </Button>
+
           <Button
             role="none"
             size="small"

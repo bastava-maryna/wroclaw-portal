@@ -19,22 +19,22 @@ class DisciplineDao:
         return Discipline.query.order_by(Discipline.discipline_name).all()
 
     @staticmethod
-    def get_discipline_by_id(disc_id: str) -> Discipline:
+    def get_discipline_by_id(discipline_id: str) -> Discipline:
         """
         Retrieve a single discipline by its unique id
         :param disc_id: The unique identifier for a discipline.
         :return: The result of the query.
         """
-        return Discipline.query.filter_by(disc_id=disc_id).first()
+        return Discipline.query.filter_by(discipline_id=discipline_id).first()
 
     @staticmethod
-    def get_discipline_by_name(disc_name: str) -> Discipline:
+    def get_discipline_by_name(discipline_name: str) -> Discipline:
         """
         Retrieve the discipline on a specific name.
         :param disc_name: Name for a discipline.
         :return: The result of the query.
         """
-        return Discipline.query.filter_by(disc_name=disc_name).first()
+        return Discipline.query.filter_by(discipline_name=discipline_name).first()
 
     @staticmethod
     def add_discipline(new_discipline: Discipline) -> bool:
@@ -67,7 +67,7 @@ class DisciplineDao:
         return BasicDao.safe_commit()
 
     @staticmethod
-    def delete_discipline_by_id(disc_id: str) -> bool:
+    def delete_discipline_by_id(discipline_id: str) -> bool:
         """
         Delete a discipline from the database based on its id.
         :param disc_id: ID which uniquely identifies the discipline.
@@ -75,6 +75,6 @@ class DisciplineDao:
         """
         db.session.execute(
             "DELETE FROM disciplines WHERE discipline_id=:disc_id",
-            {"discipline_id": disc_id},
+            {"discipline_id": discipline_id},
         )
         return BasicDao.safe_commit()
