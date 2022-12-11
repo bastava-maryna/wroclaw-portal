@@ -100,7 +100,9 @@ const Documents = () => {
 
 
       
-      
+     <center>
+    <h1 className='doc_title'>Documents </h1>
+    </center><br />
       
       {categories.map((category_arr)=>{
           return (

@@ -41,6 +41,7 @@ const MapScreen = () => {
   return (
     <div>
       <center>
+        
         <GoogleMapComponent
           pinCategories={selectedPinCategories}
           markerList={pindata}
