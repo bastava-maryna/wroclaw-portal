@@ -24,8 +24,6 @@ class Config:
         days=int(environ.get("JWT_REFRESH_TOKEN_EXPIRES"))
     )
 
-    SWAGGER_URL = "/api/docs"
-
 
 class ProdConfig(Config):
     """production specific configuration"""
@@ -35,7 +33,6 @@ class ProdConfig(Config):
     TESTING = False
     SQLALCHEMY_DATABASE_URI = environ.get("PROD_DATABASE_URI")
     SQLALCHEMY_BINDS = {"docs_db": environ.get("PROD_DOCS_DATABASE_URI")}
-    # API_URL=''
 
 
 class DevConfig(Config):
@@ -47,7 +44,5 @@ class DevConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = environ.get("DEV_DATABASE_URI")
     # SQLALCHEMY_BINDS = {"docs_db": environ.get("DEV_DOCS_DATABASE_URI")}
+
     print("dev============================" + SQLALCHEMY_DATABASE_URI)
-    API_URL = "/swagger.yaml"
-    # API_URL = "/backend/swagger.yaml"
-    # API_URL = path.join(basedir, "/swagger.yaml")

@@ -4,7 +4,9 @@ from flask_restful import Resource, fields, marshal_with
 from flask import Response, request
 from flask.json import jsonify
 from src.forum.dao.topic_dao import TopicDao
-from flask_jwt_extended import jwt_required
+from src.forum.dao.thread_dao import ThreadDao
+
+# from flask_jwt_extended import jwt_required
 from src.forum.models.topic_model import (
     Topic,
     TopicSchema,
@@ -32,6 +34,33 @@ class TopicIdApi(Resource):
 
         print(topic)
         return topic
+        """
+        if topic is None:
+            response = jsonify(
+                {
+                    "self": f"/topics/{topic_id}",
+                    "topic": None,
+                    # "log": None,
+                    "error": "there is no topic with this identifier",
+                }
+            )
+            response.status_code = 400
+            return response
+        else:
+            topic_dict: dict = Topic(topic).__dict__
+            # comment_dict["time"] = str(comment_dict["time"])
+
+            response = jsonify(
+                {
+                    "self": f"/topics/{topic_id}",
+                    "topic": topic_dict,
+                    # "log": f'/v2/logs/{comment_dict.get("log_id")}',
+                }
+            )
+            # response.status_code = 200
+            # return response
+            return Response(response, mimetype="application/json", status=200)
+        """
 
     def put(self, topic_id):
         """
@@ -92,7 +121,7 @@ class TopicIdApi(Resource):
                     "self": f"/topics/{topic_id}",
                     "updated": False,
                     "topic": None,
-                    "error": "the topic is equal to the existing topic with the same id",
+                    "error": "the topic submitted is equal to the existing topic with the same id",
                 }
             )
 
@@ -167,12 +196,34 @@ class TopicsApi(Resource):
         Get all the topics in the database.
         :return: A response object for the GET API request.
         """
-
+        print("in routes///////////////////")
         topics: list = TopicDao.get_topics()
 
         return topics
+        """
+        if disciplines is None:
+            response = jsonify(
+                {
+                    "self": "/disciplines",
+                    "disciplines": None,
+                    "error": "an unexpected error occurred retrieving disciplines",
+                }
+            )
+
+            return Response(response, mimetype="application/json", status=500)
+        else:
+            disc_dicts = [Discipline(disc).__dict__ for disc in disciplines]
+
+            # for voiv_dict in voiv_dicts:
+            #    voiv_dict["log"] = f'/v2/logs/{comment_dict.get("log_id")}'
+
+            response = jsonify({"self": "/disciplines", "disciplines": disc_dicts})
+
+            return Response(response, mimetype="application/json", status=200)
+        """
 
     def post(self):
+
         """
         Create a new discipline.
         :return: A response object for the POST API request.
@@ -250,9 +301,11 @@ class TopicsInfoApi(Resource):
         Get all the topics in the database.
         :return: A response object for the GET API request.
         """
+        print("in routes///////////////////")
         topic_info = {}
 
         topics: list = TopicDao.get_topics_info()
-        res = topics_schema.dump(topics)
 
+        res = topics_schema.dump(topics)
+        print(res)
         return topics

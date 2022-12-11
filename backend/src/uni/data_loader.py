@@ -17,6 +17,9 @@ from src.utils.helpers import get_json_from_url
 from src.utils.helpers import sql_data_to_dict
 from src.uni import constants as CONST
 
+# get column names from table
+# columns = [column.name for column in inspect(model).c]
+
 
 # here id already exist in sourse
 def load_institutions(source: str):

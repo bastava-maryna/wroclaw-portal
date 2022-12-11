@@ -2,6 +2,8 @@
 from main import db, ma
 from sqlalchemy import Column, String
 
+from src.uni.models.course_model import courses_disciplines
+
 
 class Discipline(db.Base):
     "disciplines table schema"
@@ -14,6 +16,8 @@ class Discipline(db.Base):
         self.discipline_id = discipline.get("discipline_id")
         self.discipline_name = discipline.get("discipline_name")
 
+    # def json(self):
+    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the discipline.
@@ -39,7 +43,6 @@ class DisciplineSchema(ma.Schema):
 
     class Meta:
         model = Discipline
-        fields = ("discipline_id", "discipline_name")
 
 
 discipline_schema = DisciplineSchema()

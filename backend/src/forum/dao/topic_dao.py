@@ -2,6 +2,8 @@
 Contains SQL queries related to topic."""
 
 from main import db
+from typing import List
+
 from src.uni.dao.basic_dao import BasicDao
 from src.forum.models.topic_model import Topic
 
@@ -91,8 +93,9 @@ class TopicDao:
             f"GROUP BY thread_id) "
             f"SELECT topic_id,topic_name,description, "
             f"COUNT(thread_id) AS threads_count, SUM(post_count) AS posts_count "
-            f"FROM topics JOIN threadpost ON threadpost.topic=topics.topic_id "
+            f"FROM topics LEFT JOIN threadpost ON threadpost.topic=topics.topic_id "
             f"GROUP BY topic_id,topic_name,description"
+            # ,{"topic_id": topic_id},
         ).fetchall()
 
         return result

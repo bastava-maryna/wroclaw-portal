@@ -1,4 +1,5 @@
 """helpers methods common fpr application"""
+# import urllib.request
 import sqlite3
 import json
 from passlib.hash import pbkdf2_sha256 as sha256
@@ -17,6 +18,7 @@ def get_json_from_url(source: str):
     try:
         # with urlopen(source, timeout=100) as url:
         with urlopen(request, timeout=100) as response:
+            # print(response.status)
             result = json.load(response)
             return result
     except HTTPError as http_err:
@@ -75,7 +77,3 @@ def generate_hash(password):
 
 def verify_hash(password, hash):
     return sha256.verify(password, hash)
-
-
-# get column names from table
-# columns = [column.name for column in inspect(model).c]

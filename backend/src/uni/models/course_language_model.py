@@ -16,6 +16,8 @@ class CourseLanguage(db.Base):
         self.course_language_id = course_language.get("course_language_id")
         self.course_language_name = course_language.get("course_language_name")
 
+    # def json(self):
+    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the course language.

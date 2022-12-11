@@ -15,6 +15,8 @@ class CourseTitle(db.Base):
     def __init__(self, course_title_name: str):
         self.course_title_name = course_title_name
 
+    # def json(self):
+    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the course title.
