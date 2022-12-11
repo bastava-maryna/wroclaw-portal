@@ -2,8 +2,9 @@
 import sqlite3
 from urllib.error import URLError
 from sqlalchemy.inspection import inspect
-from deep_translator import GoogleTranslator 
-translator =GoogleTranslator(source='pl', target='en') 
+from deep_translator import GoogleTranslator
+
+translator = GoogleTranslator(source="pl", target="en")
 import sqlite3
 
 # pip install -U deep-translator
@@ -126,7 +127,7 @@ def load_courses(course_list: list):
             if elem["statusCode"] == "3":
                 course_uid = validate_string(elem["courseInstanceUuid"])
                 course_name = validate_string(item["courseName"])
-                course_name=translator.translate(course_name)
+                course_name = translator.translate(course_name)
                 level = int(item["levelCode"])
                 title = int(elem["titleCode"])
                 form = int(elem["formCode"])
@@ -219,8 +220,8 @@ def load_dictionaries(initial_data: dict):
         for item in response:
             code = item["code"]
             name = validate_string(item["nameEn"])
-            
-            name=translator.translate(name)
+
+            name = translator.translate(name)
             print(name)
             elem = (code, name)
 
@@ -236,6 +237,20 @@ def fill_tables(db):
 
     conn = sqlite3.connect(db, detect_types=sqlite3.PARSE_DECLTYPES)
     cursor = conn.cursor()
+
+    # firstly delete old data
+    cursor.execute(CONST.DELETE_COURSE_FORMS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSE_TITLES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSE_LANGUAGES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSE_LEVELS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSES_DISCIPLINES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_DISCIPLINES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_UNI_KINDS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_UNIS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_VOIVODESHIPS_TABLE_QUERY)
+    conn.commit()
+    print("old data deleted-------------------------------------------------")
 
     loaded_dictionaries = load_dictionaries(data_to_load_dict)
 
@@ -254,7 +269,7 @@ def fill_tables(db):
 
     courses_data = load_courses(courses_list)
     print("courses data created-------------------------------------------------")
-    
+
     cursor.executemany(CONST.COURSES_QUERY, courses_data)
     conn.commit()
     print("courses table filled +++++++++++++++++++++++++++++++++++++++++")
