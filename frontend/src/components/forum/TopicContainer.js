@@ -15,8 +15,10 @@ import {
 } from '../../context/auth/AuthActions';
 
 const TopicContainer = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const { topic_id } = useParams();
   console.log(topic_id);
+
   const navigate = useNavigate();
   const {
     dispatch,
@@ -29,30 +31,18 @@ const TopicContainer = () => {
     newThreadLoading,
     newThreadSuccess,
     user,
+    //threads,
+    isLoading,
+    error,
   } = useContext(AuthContext);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [threads, setThreads] = useState(null);
+  const [threadss, setThreadss] = useState(null);
   const [topic, setTopic] = useState(null);
-
-  //const [newThreadState, setNewThreadState] = useState({
-  //newThreadLoading: false,
-  //newThreadSuccess: false,
-  //newThreadName: '',
-  //newThreadContent: '',
-  //newThreadId: null,
-  //newThreadError: null,
-  //newThreadShow: false,
-  //});
 
   useEffect(() => {
     const fetchTopic = async () => {
-      const { data } = await axios.get(
-        `http://127.0.0.1:5000/forum/topics/${topic_id}`
-      );
-      console.log('topic data');
-      console.log(data);
+      const { data } = await axios.get(`${API_URL}/forum/topics/${topic_id}`);
+
       setTopic(data);
     };
 
@@ -62,33 +52,14 @@ const TopicContainer = () => {
   useEffect(() => {
     const fetchThreads = async () => {
       const { data } = await axios.get(
-        `http://127.0.0.1:5000/forum/topics/${topic_id}/threads`
+        `${API_URL}/forum/topics/${topic_id}/threads`
       );
-      console.log('threads data');
-      console.log(data);
-      setThreads(data);
+
+      setThreadss(data);
     };
 
     fetchThreads();
   }, [topic_id, newThreadId]);
-
-  //const {
-  //  isLoading,
-  //  name,
-  //  slug,
-  //  description,
-  //  threads,
-  //  error,
-  //newThreadLoading,
-  //newThreadSuccess,
-  //newThreadName,
-  //newThreadContent,
-  // newThreadId,
-  //newThreadError,
-  //newThreadShow,
-  //} = this.props;
-
-  //const { topic_name, slug, description } = topic;
 
   const createThreadToggle = () => {
     dispatch({ type: 'CREATE_THREAD_TOGGLE' });
@@ -116,13 +87,14 @@ const TopicContainer = () => {
         className="mt-3 w-40 mb-3"
         variant="custom"
         type="submit"
-        onClick={() => navigate(-1)}
+        //onClick={() => navigate(-1)}
+        onClick={() => navigate('/forum')}
       >
         <i className="fa-solid fa-left-long"></i> &nbsp;Back to topics
       </Button>
       <TopicThreadList
         isLoading={isLoading}
-        threads={threads}
+        threads={threadss}
         error={error}
         topic={topic}
       />

@@ -75,3 +75,7 @@ def generate_hash(password):
 
 def verify_hash(password, hash):
     return sha256.verify(password, hash)
+
+
+# get column names from table
+# columns = [column.name for column in inspect(model).c]

@@ -68,7 +68,7 @@ const App = () => {
                   />
                   <Route
                     exact
-                    path="/forum/threads/:id"
+                    path="/forum/:topic_id/threads/:id"
                     element={<ThreadContainer />}
                   />
                   <Route path="*" element={<NotFound />} />

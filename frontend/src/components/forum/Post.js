@@ -5,39 +5,18 @@ import { Segment, Grid, Icon, Dropdown } from 'semantic-ui-react';
 import RichEditor from './RichEditor';
 import Avatar from './Avatar';
 import './style.css';
-import axios from 'axios';
 
 //const Post = ({ post, isThread, threadPost }) => {
 const Post = (props) => {
-  const [isLoading, setIsLoading] = useState(false);
-  //console.log('post_creator');
-  //console.log(post.post_creator);
-  const { deleteAction, id, threadID, isThread, dispatch } = props;
-  /*
-  const deleteThread = async (thread_id) => {
-    const response = await axios.delete(
-      `http://127.0.0.1:5000/forum/threads/${thread_id}`
-    );
+  //const [isLoading, setIsLoading] = useState(false);
 
-    return response.data;
-  };
-  */
-  /*
-  const deletePost = async (post_id) => {
-    const response = await axios.delete(
-      `http://127.0.0.1:5000/forum/posts/${post_id}`
-    );
+  const { deleteAction, id, threadID, isThread, dispatch, deletePostList } =
+    props;
 
-    return response.data;
-  };
-*/
   const onDelete = () => {
-    //const { deleteAction, id, threadID, isThread } = this.props;
     if (isThread) {
-      //deleteThread(threadID);
       deleteAction(dispatch, threadID);
     } else {
-      //deletePost(id);
       deleteAction(dispatch, id);
     }
   };
@@ -48,9 +27,8 @@ const Post = (props) => {
     creator,
     creator_name,
     avatar,
-    authenticatedUser,
-    //authenticatedUsername,
-    //authenticatedIsStaff,
+    //authenticatedUser,
+    authenticatedUserName,
     //deletePostList,
   } = props;
 
@@ -67,7 +45,7 @@ const Post = (props) => {
     </div>
   );
 
-  //const isLoading = !isThread && deletePostList.indexOf(id) >= 0;
+  const isLoading = !isThread && deletePostList.indexOf(id) >= 0;
 
   return (
     <Segment loading={isLoading} color={color}>
@@ -95,7 +73,7 @@ const Post = (props) => {
         </Grid.Column>
         <Grid.Column width={12}>
           <div className="post-time">{createdAt}</div>
-          {actions}
+          {authenticatedUserName === creator_name && actions}
           <RichEditor
             readOnly={true}
             content={content}
@@ -116,6 +94,7 @@ export default Post;
           <div className="post-time">
             {post.post_created_at}
             {(authenticatedUsername === creator.username) && actions}
+            {authenticatedUser.user_name === creator_name && actions}
           </div>
           <RichEditor
 */

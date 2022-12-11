@@ -4,9 +4,7 @@ from flask_restful import Resource, fields, marshal_with
 from flask import Response, request
 from flask.json import jsonify
 from src.forum.dao.topic_dao import TopicDao
-from src.forum.dao.thread_dao import ThreadDao
-
-# from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required
 from src.forum.models.topic_model import (
     Topic,
     TopicSchema,
@@ -34,33 +32,6 @@ class TopicIdApi(Resource):
 
         print(topic)
         return topic
-        """
-        if topic is None:
-            response = jsonify(
-                {
-                    "self": f"/topics/{topic_id}",
-                    "topic": None,
-                    # "log": None,
-                    "error": "there is no topic with this identifier",
-                }
-            )
-            response.status_code = 400
-            return response
-        else:
-            topic_dict: dict = Topic(topic).__dict__
-            # comment_dict["time"] = str(comment_dict["time"])
-
-            response = jsonify(
-                {
-                    "self": f"/topics/{topic_id}",
-                    "topic": topic_dict,
-                    # "log": f'/v2/logs/{comment_dict.get("log_id")}',
-                }
-            )
-            # response.status_code = 200
-            # return response
-            return Response(response, mimetype="application/json", status=200)
-        """
 
     def put(self, topic_id):
         """
@@ -121,7 +92,7 @@ class TopicIdApi(Resource):
                     "self": f"/topics/{topic_id}",
                     "updated": False,
                     "topic": None,
-                    "error": "the topic submitted is equal to the existing topic with the same id",
+                    "error": "the topic is equal to the existing topic with the same id",
                 }
             )
 
@@ -174,31 +145,16 @@ class TopicNameApi(Resource):
     # @jwt_required()
     def get(self, name):
         "get topic by name"
-        # voivodeship = Voivodeship.objects.get(name=name).to_json()
-        # if voivodeship:
-        #     return Response(voivodeship, mimetype="application/json", status=200)
-        # return {"message": "Uni not found"}, 404
+
         topic = Topic.objects.get(name=name).to_json()
         return Response(topic, mimetype="application/json", status=200)
 
     def put(self, name):
-        # data = Uni.parser.parse_args()
-        # voivodeship = Voivodeship.objects.get(name=name)
-        # if voivodeship is None:
-        #    voivodeship = voivodeship(name, data["terc"])
-        # else:
-        #    voivodeship.terc = data["terc"]
-        # voivodeship.save_to_db()
-
         body = request.get_json()
         Topic.objects.get(name=name).update(**body)
         return "", 200
 
     def delete(self, name):
-        # voivodeship = Voivodeship.objects.get(name=name)
-        # if voivodeship:
-        #    voivodeship.delete()
-        # return {"message": "Uni deleted"}
 
         topic = Topic.objects.get(name=name).delete()
         return "", 200
@@ -211,48 +167,12 @@ class TopicsApi(Resource):
         Get all the topics in the database.
         :return: A response object for the GET API request.
         """
-        print("in routes///////////////////")
+
         topics: list = TopicDao.get_topics()
 
         return topics
-        """
-        if disciplines is None:
-            response = jsonify(
-                {
-                    "self": "/disciplines",
-                    "disciplines": None,
-                    "error": "an unexpected error occurred retrieving disciplines",
-                }
-            )
-
-            return Response(response, mimetype="application/json", status=500)
-        else:
-            disc_dicts = [Discipline(disc).__dict__ for disc in disciplines]
-
-            # for voiv_dict in voiv_dicts:
-            #    voiv_dict["log"] = f'/v2/logs/{comment_dict.get("log_id")}'
-
-            response = jsonify({"self": "/disciplines", "disciplines": disc_dicts})
-
-            return Response(response, mimetype="application/json", status=200)
-        """
 
     def post(self):
-        # if Voivodeship.objects.get(name=name):
-        #    return {
-        #        "message": "A voivodeship with name '{} already exists.".format(name)
-        #    }, 400
-
-        # data = Uni.parser.parse_args()
-
-        # uni = UniModel(name, data["price"])
-
-        # try:
-        #    uni.save_to_db()
-        # except:
-        #    return {"message": "An error occured inserting the item"}, 500
-
-        # return uni.json(), 201
         """
         Create a new discipline.
         :return: A response object for the POST API request.
@@ -330,19 +250,9 @@ class TopicsInfoApi(Resource):
         Get all the topics in the database.
         :return: A response object for the GET API request.
         """
-        print("in routes///////////////////")
         topic_info = {}
-        # topics: list = TopicDao.get_topics()
-        topics: list = TopicDao.get_topics_info()
-        print(type(topics))
-        print(topics)
-        # for topic in topics:
-        #    topic.add(555)
-        #    threads_count = ThreadDao.get_threads_count(topic.topic_id)
-        # topic_info["topic_id"] = threads_count
-        # topic_info["topic_id"] = topics(3)
 
-        print(type(topics))
+        topics: list = TopicDao.get_topics_info()
         res = topics_schema.dump(topics)
-        print(res)
+
         return topics

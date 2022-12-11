@@ -6,6 +6,8 @@ import UnivercityContext from '../../context/uni/UnivercityContext';
 import { searchUnisByFilters } from '../../context/uni/UnivercityActions';
 
 const UniversitySearch = (props) => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const { dispatch, city, level, discipline, search } =
     useContext(UnivercityContext);
 
@@ -15,19 +17,19 @@ const UniversitySearch = (props) => {
 
   useEffect(() => {
     const fetchDisciplines = async () => {
-      const { data } = await axios.get('http://127.0.0.1:5000/disciplines');
+      const { data } = await axios.get(`${API_URL}/uni/disciplines`);
 
-      setDisciplines(data);
+      setDisciplines(data.disciplines);
     };
 
     const fetchLevels = async () => {
-      const { data } = await axios.get('http://127.0.0.1:5000/courses/levels');
-      setLevels(data);
+      const { data } = await axios.get(`${API_URL}/uni/levels`);
+      setLevels(data.levels);
     };
 
     const fetchCities = async () => {
-      const { data } = await axios.get('http://127.0.0.1:5000/unis/cities');
-      setCities(data);
+      const { data } = await axios.get(`${API_URL}/uni/unis/cities`);
+      setCities(data.cities);
     };
 
     fetchDisciplines();

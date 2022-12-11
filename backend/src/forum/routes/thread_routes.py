@@ -3,13 +3,10 @@ Used for retrieving, adding, updating, and deleting threads ."""
 from flask_restful import Resource, fields, marshal_with
 from flask import Response, request, make_response
 from flask.json import jsonify
-from src.forum.dao.topic_dao import TopicDao
 from src.forum.dao.thread_dao import ThreadDao
 from src.user.dao.user_dao import UserDao
-import json
 from marshmallow import pprint
-
-# from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required
 from src.forum.models.thread_model import (
     Thread,
     thread_schema,
@@ -37,37 +34,8 @@ class ThreadIdApi(Resource):
         :return: A response object for the GET API request.
         """
         thread = ThreadDao.get_thread_by_id(thread_id=thread_id)
-        # thread = ThreadDao.get_thread_by_id(thread_id=thread_id)
-        print(type(thread))
-        print(thread)
-        return thread
-        """
-        if thread is None:
-            response = jsonify(
-                {
-                    "self": f"/threads/{thread_id}",
-                    "thread": None,
-                    # "log": None,
-                    "error": "there is no thread with this identifier",
-                }
-            )
-            response.status_code = 400
-            return response
-        else:
-            thread_dict: dict = Thread(thread).__dict__
-            # comment_dict["time"] = str(comment_dict["time"])
 
-            response = jsonify(
-                {
-                    "self": f"/threads/{thread_id}",
-                    "thread": thread_dict,
-                    # "log": f'/v2/logs/{comment_dict.get("log_id")}',
-                }
-            )
-            # response.status_code = 200
-            # return response
-            return Response(response, mimetype="application/json", status=200)
-        """
+        return thread
 
     def put(self, thread_id):
         """
@@ -128,7 +96,7 @@ class ThreadIdApi(Resource):
                     "self": f"/threads/{thread_id}",
                     "updated": False,
                     "thread": None,
-                    "error": "the thread submitted is equal to the existing thread with the same id",
+                    "error": "the thread is equal to the existing thread with the same id",
                 }
             )
 
@@ -183,55 +151,17 @@ class ThreadsApi(Resource):
         Get all the threads in the database.
         :return: A response object for the GET API request.
         """
-        print("in routes///////////////////")
+
         threads: list = ThreadDao.get_threads()
 
         return threads
-        """
-        if disciplines is None:
-            response = jsonify(
-                {
-                    "self": "/disciplines",
-                    "disciplines": None,
-                    "error": "an unexpected error occurred retrieving disciplines",
-                }
-            )
-
-            return Response(response, mimetype="application/json", status=500)
-        else:
-            disc_dicts = [Discipline(disc).__dict__ for disc in disciplines]
-
-            # for voiv_dict in voiv_dicts:
-            #    voiv_dict["log"] = f'/v2/logs/{comment_dict.get("log_id")}'
-
-            response = jsonify({"self": "/disciplines", "disciplines": disc_dicts})
-
-            return Response(response, mimetype="application/json", status=200)
-        """
 
     def post(self):
-        # if Voivodeship.objects.get(name=name):
-        #    return {
-        #        "message": "A voivodeship with name '{} already exists.".format(name)
-        #    }, 400
-
-        # data = Uni.parser.parse_args()
-
-        # uni = UniModel(name, data["price"])
-
-        # try:
-        #    uni.save_to_db()
-        # except:
-        #    return {"message": "An error occured inserting the item"}, 500
-
-        # return uni.json(), 201
         """
         Create a new thread.
         :return: A response object for the POST API request.
         """
         thread_data: dict = request.get_json()
-        print("new thread data from request")
-        print(thread_data)
 
         if thread_data is None:
             response = jsonify(
@@ -326,66 +256,44 @@ class ThreadsByTopicApi(Resource):
         Get all the threads by topic in the database.
         :return: A response object for the GET API request.
         """
-        print("in routes///////////////////")
 
         threads: list = ThreadDao.get_threads_by_topic(topic_id)
-        print(type(threads))
-        print(threads)
-        for thread in threads:
-            print(thread)
-            # if
 
-        # res = threads_schema.dump(threads)
-        # print(res)
-        return threads
+        if threads is None:
+            response = jsonify(
+                {
+                    "self": "/treads",
+                    "threads": None,
+                    "error": "there is no threads in this topic",
+                    "message": "there is no threads in this topic",
+                }
+            )
 
-    @marshal_with(resource_fields)
-    def get1(self, topic_id: int):
-        """
-        Get all the threads by topic in the database.
-        :return: A response object for the GET API request.
-        """
-        print("in routes///////////////////")
+            return Response(response, mimetype="application/json", status=200)
+        else:
 
-        threads: list = ThreadDao.get_threads_by_topic(topic_id)
-        print(type(threads))
-        print(threads)
-        for thread in threads:
-            print(thread)
-
-        # res = threads_schema.dump(threads)
-        # print(res)
-        return threads
+            # res = threads_schema.dump(threads)
+            # print(res)
+            return threads, 200
 
 
 class ThreadIdInfoApi(Resource):
-    resource_fields_user = {
-        "user_id": fields.Integer,
-        "user_name": fields.String,
-        "user_email": fields.String,
-        "avatar": fields.String,
-    }
-
-    # @marshal_with(resource_fields_user, resource_fields)
     def get(self, thread_id):
         """
         Get a single thread with a unique ID with user info.
         :param thread_id: The unique identifier for a thread.
         :return: A response object for the GET API request.
         """
-
         # thread = ThreadDao.get_thread_info_by_id(thread_id=thread_id)
         thread = ThreadDao.get_thread_by_id(thread_id=thread_id)
-        print("thread info")
-        print(type(thread))
-        print(thread)
+
         if thread is None:
             response = jsonify(
                 {
                     "self": f"/threads/{thread_id}",
                     "thread": None,
-                    # "log": None,
-                    "error": "there is no thread with this identifier",
+                    "data": None,
+                    "message": "there is no thread with this identifier",
                 }
             )
             response.status_code = 404
@@ -393,19 +301,9 @@ class ThreadIdInfoApi(Resource):
         else:
             user = UserDao.get_user_by_id(user_id=thread.thread_creator)
 
-            print("user info")
-            print(type(user))
-            print(user)
             thread_dict: dict = thread.to_dict()
             user_dict: dict = user.to_dict()
             thread_dict.update(user_dict)
-            print(thread_dict)
 
-            # res = thread_info_schema.dump(thread)
-            # res = ThreadSchema().dump(thread)
-
-            # pprint(res)
-            # resp=make_response(json.dumps(thread),200)
-            # return thread_dict
             return jsonify(thread_dict)
             # return Response(thread, mimetype="application/json", status=200)

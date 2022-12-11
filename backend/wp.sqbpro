@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="D:/StudyProjects/wroclaw-portal/backend/wp.db" readonly="0" foreign_keys="" case_sensitive_like="" temp_store="" wal_autocheckpoint="" synchronous=""/><attached/><window><main_tabs open="browser pragmas structure query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="5165"/><column_width id="4" width="0"/></tab_structure><tab_browse><current_table name="0,0:"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">select  * from unis 
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="D:/StudyProjects/wroclaw-portal/backend/wp.db" readonly="0" foreign_keys="0" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="0" synchronous="1"/><attached/><window><main_tabs open="browser pragmas structure query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="125"/><column_width id="3" width="5165"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,5:mainposts"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="course_forms" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths/><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="posts" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="75"/><column index="2" value="300"/><column index="3" value="162"/><column index="4" value="158"/><column index="5" value="66"/><column index="6" value="120"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="threads" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="93"/><column index="2" value="231"/><column index="3" value="300"/><column index="4" value="169"/><column index="5" value="182"/><column index="6" value="53"/><column index="7" value="138"/><column index="8" value="69"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">select  * from unis 
 join 
 studies
 on uni_uid=studies.institutions 
@@ -99,18 +99,15 @@ update posts set post_created_at=&quot;2022-11-13 11:10:00&quot;
 where post_id=7
 
 update users set password=&quot;$pbkdf2-sha256$29000$MEbI2fsfA4AQohRCSElJ6Q$/vxGjPkDIznIS6a0ik6Mh.g37j2BmTdI5/J8b7t/tpE&quot;
-where user_id=6
-
-
+where user_id=16
 
 update threads set pinned=&quot;false&quot;
-
 where thread_id=4
 
 //topic info
 with threadpost as
 (select topic,thread_id,count(post_id) as post_count
-from threads join posts 
+from threads  left join posts 
 on thread_id=thread
 group by thread_id),
 thread_last_posts as
@@ -171,59 +168,91 @@ group by institution
 order by course_name
 
 delete from users
-where user_id&gt;3
+where user_id&gt;6
 
 delete from courses
 
-
-
 delete from posts
-
-where post_id=55
-
-
-
-
-
+where post_id=6
 
 
 
 
 //threads by topic ??
-
  WITH threadpost AS 
-
  (SELECT topic, thread_id, count(post_id) AS post_count 
-
   FROM threads LEFT JOIN posts ON thread_id=thread GROUP BY thread_id) 
-
   
-
      SELECT g.*, u1.user_name AS thread_creator_name, u2.user_name AS post_creator_name, post_count 
-
   FROM 
-
     (SELECT p.*, thread_id,thread_name, thread_created_at, thread_creator, thread_content,pinned,topic 
-
        FROM threads left join
-
         (SELECT post_id, post_created_at, post_creator, thread ,row_number() 
-
             OVER (PARTITION BY thread ORDER BY post_created_at DESC) AS rn 
-
         FROM posts) AS p 
-
         ON threads.thread_id=p.thread where rn=1 or rn is null) AS g 
-
  join threadpost ON threadpost.thread_id=g.thread_id 
-
  left JOIN users AS u1 ON u1.user_id=g.thread_creator 
-
  left JOIN users AS u2 ON u2.user_id=g.post_creator 
-
  WHERE g.topic=1
-
 ORDER BY post_created_at DESC
+
+
+//threads by topic without last activity
+ WITH threadpost AS 
+ (SELECT thread_id, count(post_id) AS post_count 
+  FROM threads LEFT JOIN posts ON thread_id=thread GROUP BY thread_id) 
+  SELECT threads.thread_id,thread_name, thread_created_at, thread_creator, thread_content,pinned,threads.topic ,post_count, u1.user_name AS thread_creator_name
+  FROM threads join
+  threadpost ON threadpost.thread_id=threads.thread_id 
+ JOIN users AS u1 ON u1.user_id=thread_creator 
+ WHERE topic=1
+ORDER BY thread_created_at DESC
+
+//thread last activity
+     SELECT g.*, u1.user_name AS thread_creator_name, u2.user_name AS post_creator_name
+  FROM 
+    (SELECT p.*, thread_id,thread_name, thread_created_at, thread_creator, thread_content,topic 
+       FROM threads left join
+        (SELECT post_id, post_created_at, post_creator, thread ,row_number() 
+            OVER (PARTITION BY thread ORDER BY post_created_at DESC) AS rn 
+        FROM posts) AS p 
+        ON threads.thread_id=p.thread where rn=1 or rn is null) AS g 
+ left JOIN users AS u1 ON u1.user_id=g.thread_creator 
+ left JOIN users AS u2 ON u2.user_id=g.post_creator 
+ WHERE g.topic=1
+ORDER BY post_created_at DESC
+
+//threads by topic try combine without last activity
+WITH threadpost AS 
+(SELECT thread_id, count(post_id) AS post_count 
+  FROM threads LEFT JOIN posts ON thread_id=thread GROUP BY thread_id),
+last_activity AS
+(SELECT g.*, u2.user_name AS post_creator_name,u2.avatar as post_creator_avatar
+  FROM 
+    (SELECT p.*,topic 
+       FROM threads left join
+        (SELECT post_id, post_created_at, post_creator, thread ,row_number() 
+            OVER (PARTITION BY thread ORDER BY post_created_at DESC) AS rn 
+        FROM posts) AS p 
+        ON threads.thread_id=p.thread where rn=1 or rn is null) AS g  
+ left JOIN users AS u2 ON u2.user_id=g.post_creator 
+ WHERE g.topic=1)
+  SELECT threads.thread_id,thread_name, thread_created_at, thread_creator, thread_content,pinned,threads.topic ,
+	post_count, u1.user_name AS thread_creator_name,u1.avatar AS thread_creator_avatar,post_creator,post_creator_name,post_created_at,post_id,post_creator_avatar
+  FROM threads join
+  threadpost ON threadpost.thread_id=threads.thread_id 
+ JOIN users AS u1 ON u1.user_id=thread_creator 
+ LEFT JOIN last_activity ON threads.thread_id=last_activity.thread
+ WHERE threads.topic=1
+ORDER BY thread_created_at DESC
+
+//posts by thread
+SELECT thread_id,thread_creator, post_id,post_content, 
+  post_created_at,post_updated_at,post_creator,u2.user_name as post_creator_name, u2.avatar as avatar 
+FROM threads JOIN posts ON thread_id=thread 
+JOIN users AS u2 ON u2.user_id=post_creator 
+WHERE thread_id=1
 
 
 
@@ -231,12 +260,20 @@ ORDER BY post_created_at DESC
 
 //posts by thread
 
-SELECT thread_id,thread_creator, post_id,post_content, 
+SELECT thread_id,thread_creator, post_id,post_content,post_created_at,post_updated_at,post_creator,
 
-  post_created_at,post_updated_at,post_creator,u2.user_name as post_creator_name, u2.avatar as avatar 
+u2.user_name as post_creator_name, u2.avatar as avatar 
 
 FROM threads JOIN posts ON thread_id=thread 
 
 JOIN users AS u2 ON u2.user_id=post_creator 
 
-WHERE thread_id=1</sql><current_tab id="0"/></tab_sql></sqlb_project>
+WHERE thread_id='5'
+
+
+
+select * from threads join posts
+
+ON thread_id=thread 
+
+where thread_id=5</sql><current_tab id="0"/></tab_sql></sqlb_project>

@@ -7,7 +7,7 @@ import { Segment, Grid, Icon } from 'semantic-ui-react';
 import Avatar from './Avatar';
 import './style.css';
 
-const BaseThread = ({ thread }) => {
+const BaseThread = ({ thread, topic }) => {
   const {
     thread_id,
     thread_name,
@@ -19,7 +19,7 @@ const BaseThread = ({ thread }) => {
     post_count,
     last_activity,
   } = thread;
-
+  const { topic_id } = topic;
   const thread_name_corrected =
     thread_name.length > 57
       ? thread_name.substring(0, 55) + '...'
@@ -88,14 +88,14 @@ const BaseThread = ({ thread }) => {
               <div className="forum-column">
                 <div>
                   <Icon name={pinned ? 'pin' : 'comment alternate outline'} />
-                  <Link to={`/forum/threads/${thread.thread_id}`}>
+                  <Link to={`/forum/${topic_id}/threads/${thread_id}`}>
                     {thread_name_corrected}
                   </Link>
                 </div>
                 <div className="forum-meta">
-                  <Link to={`/user/${last_activity.post_creator_name}`}>
+                  <Link to={`/user/${thread_creator_name}`}>
                     <Icon name="user" />
-                    {last_activity.post_creator_name}
+                    {thread_creator_name}
                   </Link>
                   <b> - {thread_date_humanized} ago</b>
                 </div>

@@ -28,11 +28,7 @@ class CourseDao:
         :param study_name: Study name
         :return: The result of the database query.
         """
-        return (
-            Course.query.filter_by(course_name=course_name)
-            # .options(defer("profilepic"), defer("profilepic_name"))
-            .all()
-        )
+        return Course.query.filter_by(course_name=course_name).all()
 
     @staticmethod
     def get_course_by_id(course_id: str) -> Course:
@@ -41,11 +37,7 @@ class CourseDao:
         :param id: Id which uniquely identifies the course.
         :return: The result of the database query.
         """
-        return (
-            Course.query.filter_by(course_id=course_id)
-            # .options(defer("profilepic"), defer("profilepic_name"))
-            .first()
-        )
+        return Course.query.filter_by(course_id=course_id).first()
 
     @staticmethod
     def add_course(course: Course) -> bool:
@@ -92,15 +84,9 @@ class CourseDao:
 
         return BasicDao.safe_commit()
 
-        # return Study.query(Study.level).distinct().order_by(Study.level).all()
-        # return Course.query.with_entities(Course.level).distinct().all()
-
     @staticmethod
     def filter_courses(params: dict) -> List[Course]:
         """method to filter courses using parameners from query string"""
-
-        print("params from query")
-        print(params)
 
         query = (
             Course.query.join(CourseLanguage)

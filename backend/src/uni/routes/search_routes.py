@@ -1,6 +1,6 @@
 """Search routes in the WroclawPortal API."""
 from flask_restful import Resource, fields, marshal_with
-from flask import Response, request
+from flask import request
 from flask.json import jsonify
 
 from src.uni.dao.uni_dao import UniDao
@@ -10,22 +10,14 @@ from src.uni.dao.level_dao import CourseLevelDao
 from src.uni.dao.title_dao import CourseTitleDao
 from src.uni.dao.form_dao import CourseFormDao
 
-# from flask_jwt_extended import jwt_required
-
 
 class SearchUniApi(Resource):
-    # parser = reqparse.RequestParser()
-    # parser.add_argument(
-    #    "price", type=float, required=True, help="This field cannot be left blank!"
-    # )
     response_fields = {
         "course_id": fields.Integer,
         "course_name": fields.String,
         "course_level_name": fields.String,
-        # "level_name": fields.String,
         "discipline_name": fields.String,
         "main_discipline": fields.String,
-        # "uni_id": fields.Integer,
         "uni_uid": fields.String,
         "uni_name": fields.String,
         "city": fields.String,
@@ -39,10 +31,12 @@ class SearchUniApi(Resource):
 
     @marshal_with(response_fields)
     def get(self):
-        # def get_unis_filtered_from_query_string(self):
         """
-        Get a single study with a unique ID.
-        :param study_id: The unique identifier for a study.
+        Get courses with university info by parameters from query string.
+        :param search: The search word to filter university by fields of study (like criteria).
+        :param discipline_name: The discipline to filter university by fields of study.
+        :param level: The level to filter university by levels.
+        :param city: The city to filter university by cities.
         :return: A response object for the GET API request.
         """
         error = None
@@ -51,27 +45,14 @@ class SearchUniApi(Resource):
             print("query from request")
             print(query)
         else:
-            # ?? or return all without filtering
+            # return all without filtering
             error = "Empty query string."
 
         result = UniDao.filter_unis(query)
         return result
 
-        def post(self):
-            return {}
-
-        def put(self):
-            return {}
-
-        def delete(self):
-            return None, 204
-
 
 class SearchCourseApi(Resource):
-    # parser = reqparse.RequestParser()
-    # parser.add_argument(
-    #    "price", type=float, required=True, help="This field cannot be left blank!"
-    # )
     response_fields = {
         "course_id": fields.Integer,
         "course_name": fields.String,
@@ -81,17 +62,17 @@ class SearchCourseApi(Resource):
         "language": fields.String,
         "semesters_number": fields.Integer,
         "ects": fields.Integer,
-        # "discipline_name": fields.String,
         "main_discipline": fields.String,
-        # "city": fields.String,
     }
 
     @marshal_with(response_fields)
     def get(self):
-        # def get_unis_filtered_from_query_string(self):
         """
-        Get a single study with a unique ID.
-        :param study_id: The unique identifier for a study.
+        Get courses info by parameters from query string.
+        :param search: The search word to filter courses by fields of study (like criteria).
+        :param discipline_name: The discipline to filter courses by fields of study.
+        :param level: The level to filter courses by levels.
+        :param uni_uid: The university to filter courses.
         :return: A response object for the GET API request.
         """
         error = None
@@ -104,12 +85,7 @@ class SearchCourseApi(Resource):
 
         result = CourseDao.filter_courses(query)
 
-        print("result courses in route/////////////////////")
-        print(result)
         for course in result:
-            print(course)
-            print(type(course))
-            print(course.language)
             language = CourseLanguageDao.get_language_by_id(course.language)
             level = CourseLevelDao.get_level_by_id(course.level)
             form = CourseFormDao.get_form_by_id(course.form)
@@ -119,7 +95,5 @@ class SearchCourseApi(Resource):
             course.form = form.course_form_name
             course.title = title.course_title_name
             course.level = level.course_level_name
-
-            print(course)
 
         return result

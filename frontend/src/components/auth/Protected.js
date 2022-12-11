@@ -23,7 +23,6 @@ const Protected = ({ showRegister, showLogin }) => {
       <div>
         <Message attached header="To use forum you must login or register" />
         {statusMessage}
-
         <Message attached="top" info>
           <Icon name="help" />
           New to this forum?&nbsp;
@@ -38,6 +37,7 @@ const Protected = ({ showRegister, showLogin }) => {
             Login here
           </Link>
         </Message>
+        &nbsp;
       </div>
     );
   } else return null;

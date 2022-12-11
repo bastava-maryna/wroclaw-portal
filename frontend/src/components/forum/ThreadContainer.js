@@ -6,81 +6,79 @@ import axios from 'axios';
 import './style.css';
 import Thread from './Thread';
 import AuthContext from '../../context/auth/AuthContext';
-//import {createPost, fetchThread, deletePost, deleteThread} from '../../actions';
 import {
   authHeader,
   createPost,
   deletePost,
   deleteThread,
+  //fetchThread,
 } from '../../context/auth/AuthActions';
 
 const ThreadContainer = () => {
-  const { id } = useParams();
-  console.log('thread_id');
-  console.log(id);
+  const API_URL = process.env.REACT_APP_API_URL;
+  const { topic_id, id } = useParams();
+  console.log('topic_id,thread_id');
+  console.log(topic_id, id);
   const navigate = useNavigate();
+
   const {
-    dispatch,
-    isLoading,
-    //name,
-    //content,
-    //pinned,
-    //creator,
-    //createdAt,
-    posts,
-    error,
-    isAuthenticated,
+    //posts,
     curThread,
-    //createPost,
     //newPostLoading,
     //newPostError,
     //newPostSuccess,
-    //authenticatedUsername,
-    //authenticatedIsStaff,
     //deletePostList,
-    //deletePost,
-    //isDeleting,
-    //deleteError,
-    //deleteThread,
+    isDeleting,
+    deleteError,
+    //threads,
+    dispatch,
+    name,
   } = useContext(AuthContext);
 
-  //const [isLoading, setIsLoading] = useState(false);
-  //const [error, setError] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [deleteError, setDeleteError] = useState(null);
   const [currentThread, setCurrentThread] = useState([]);
   const [postss, setPostss] = useState([]);
 
   useEffect(() => {
-    const fetchThread = async () => {
-      const { data } = await axios.get(
-        `http://127.0.0.1:5000/forum/threads/${id}/info`,
-        { headers: authHeader() }
-      );
-      console.log('thread data');
-      console.log(data);
-      setCurrentThread(data);
-    };
+    dispatch({ type: 'FETCH_THREAD_REQUEST' });
 
+    const fetchThread = async () => {
+      //const { data } = await axios
+      await axios
+        .get(`${API_URL}/forum/threads/${id}/info`, {
+          headers: authHeader(),
+        })
+        .then((response) => {
+          if (response.data) {
+            setCurrentThread(response.data);
+            dispatch({ type: 'FETCH_THREAD_SUCCESS', thread: response.data });
+          } else {
+            setCurrentThread(null);
+            dispatch({ type: 'RESET' });
+            navigate(`/forum/topics/${topic_id}`);
+          }
+        })
+        .catch((error) => {
+          dispatch({ type: 'RESET' });
+          navigate(`/forum/topics/${topic_id}`);
+        });
+    };
     fetchThread();
-  }, [id]);
+  }, [id, name]);
+  //}, []);
 
   useEffect(() => {
     const fetchThreadPosts = async () => {
-      const { data } = await axios.get(
-        `http://127.0.0.1:5000/forum/threads/${id}/posts`,
-        { headers: authHeader() }
-      );
-      console.log('thread posts data');
-      console.log(data);
+      const { data } = await axios.get(`${API_URL}/forum/threads/${id}/posts`, {
+        headers: authHeader(),
+      });
+
       setPostss(data);
+      dispatch({ type: 'FETCH_THREAD_POST_SUCCESS', posts: data });
     };
-
-    fetchThreadPosts();
-  }, [id, curThread]);
-
-  //console.log('before return');
-  console.log(currentThread);
+    if (currentThread) {
+      fetchThreadPosts();
+    }
+  }, [id, curThread, name]);
 
   return (
     <>
@@ -88,28 +86,18 @@ const ThreadContainer = () => {
         className="mt-3 w-40 mb-3"
         variant="custom"
         type="submit"
-        onClick={() => navigate(-1)}
+        //onClick={() => navigate(-1)}
+        onClick={() => navigate(`/forum/topics/${topic_id}`)}
       >
         <i className="fa-solid fa-left-long"></i> &nbsp;Back to threads
       </Button>
       <Thread
         thread={currentThread}
-        //id={thread_id}
-        //isLoading={isLoading}
-        //name={thread.thread_name}
-        //content={thread.thread_content}
-        //pinned={thread.pinned}
-        //creator={thread.thread_creator}
-        //createdAt={thread.thread_created_at}
         posts={postss}
-        //error={error}
-        //isAuthenticated={isAuthenticated}
         createPost={createPost}
         //newPostSuccess={newPostSuccess}
         //newPostLoading={newPostLoading}
         //newPostError={newPostError}
-        //authenticatedUsername={authenticatedUsername}
-        //authenticatedIsStaff={authenticatedIsStaff}
         //deletePostList={deletePostList}
         deletePost={deletePost}
         isDeleting={isDeleting}
