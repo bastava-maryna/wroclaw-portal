@@ -36,9 +36,8 @@ class Uni(db.Base):
         self.postal_code = uni.get("postal_code")
         self.voivodeship = uni.get("voivodeship")
 
-    def to_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
+    # def json(self):
+    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the uni.
@@ -63,26 +62,15 @@ class Uni(db.Base):
         )
 
 
+# def json(self):
+#    return {"name":self.name,...}
+
+
 class UniSchema(ma.Schema):
     """schema for Uni"""
 
     class Meta:
         model = Uni
-        fields = (
-            "uni_id",
-            "uni_uid",
-            "uni_name",
-            "uni_kind",
-            "www",
-            "phone_number",
-            "uni_email",
-            "city",
-            "street",
-            "building",
-            "postal_code",
-            "voivodeship",
-        )
-        ordered = True
 
 
 uni_schema = UniSchema()
@@ -92,7 +80,6 @@ unis_schema = UniSchema(many=True)
 class CitiesSchema(ma.Schema):
     class Meta:
         model = Uni
-        fields = ("city",)
 
 
 cities_schema = CitiesSchema(many=True)

@@ -15,6 +15,8 @@ class UniKind(db.Base):
     def __init__(self, uni_kind: dict):
         self.kind_name = uni_kind.get("kind_name")
 
+    # def json(self):
+    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the uniiversity kind.

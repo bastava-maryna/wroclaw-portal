@@ -122,6 +122,8 @@ class UniDao:
 
     @staticmethod
     def filter_unis(params: dict) -> List[Uni]:
+        print("params from query")
+        print(params)
 
         query = (
             Course.query.join(

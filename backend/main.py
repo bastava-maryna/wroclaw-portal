@@ -7,7 +7,6 @@ from flask_restful import Api
 from flask_marshmallow import Marshmallow
 from flask_jwt_extended import JWTManager
 
-
 from src.uni.data_loader import fill_tables
 from src.forum.forum_sample_data import fill_forum_tables
 from database import Database
@@ -49,14 +48,21 @@ def create_app(config_class="config.DevConfig"):
     jwt.init_app(app)
     with app.app_context():
         # include routes
+        from src.uni.routes.voivodeship_routes import (
+            VoivodeshipIdApi,
+            VoivodeshipsApi,
+        )
+
         from src.uni.routes.course_routes import (
             CourseIdApi,
+            CourseNameApi,
             CoursesApi,
         )
 
         from src.uni.routes.uni_routes import (
             UniIdApi,
             UniUidApi,
+            # UniNameApi,
             UnisApi,
             CitiesApi,
         )
@@ -69,6 +75,7 @@ def create_app(config_class="config.DevConfig"):
 
         from src.uni.routes.level_routes import (
             CourseLevelIdApi,
+            CourseLevelNameApi,
             CourseLevelsApi,
         )
 
@@ -76,6 +83,7 @@ def create_app(config_class="config.DevConfig"):
 
         from src.forum.routes.topic_routes import (
             TopicIdApi,
+            TopicNameApi,
             TopicsApi,
             TopicsInfoApi,
         )
@@ -95,25 +103,32 @@ def create_app(config_class="config.DevConfig"):
 
         from src.user.routes.user_routes import UserIdApi, UsersApi, UserAuthApi
 
-        api.add_resource(DisciplineIdApi, "/uni/disciplines/<discipline_id>")
-        api.add_resource(DisciplineNameApi, "/uni/disciplines/name/<discipline_name>")
-        api.add_resource(DisciplinesApi, "/uni/disciplines")
+        api.add_resource(VoivodeshipIdApi, "/voivodeships/<id>")
+        api.add_resource(VoivodeshipsApi, "/voivodeships")
 
-        api.add_resource(CourseIdApi, "/uni/courses/<course_id>")
-        api.add_resource(CoursesApi, "/uni/courses")
+        api.add_resource(DisciplineIdApi, "/disciplines/<discipline_id>")
+        api.add_resource(DisciplineNameApi, "/disciplines/name/<disciline_name>")
+        api.add_resource(DisciplinesApi, "/disciplines")
 
-        api.add_resource(UniIdApi, "/uni/unis/<uni_id>")
-        api.add_resource(UniUidApi, "/uni/unis/uid/<uni_uid>")
-        api.add_resource(UnisApi, "/uni/unis")
-        api.add_resource(CitiesApi, "/uni/unis/cities")
+        api.add_resource(CourseIdApi, "/courses/<course_id>")
+        api.add_resource(CourseNameApi, "/courses/name/<course_name>")
+        api.add_resource(CoursesApi, "/courses")
 
-        api.add_resource(CourseLevelIdApi, "/uni/levels/<level_id>")
-        api.add_resource(CourseLevelsApi, "/uni/levels")
+        api.add_resource(UniIdApi, "/unis/<uni_id>")
+        api.add_resource(UniUidApi, "/unis/uid/<uni_uid>")
+        # api.add_resource(UniNameApi, "/unis/name/<uni_name>")
+        api.add_resource(UnisApi, "/unis")
+        api.add_resource(CitiesApi, "/unis/cities")
 
-        api.add_resource(SearchUniApi, "/uni/search/unis")
-        api.add_resource(SearchCourseApi, "/uni/search/courses")
+        api.add_resource(CourseLevelIdApi, "/courses/levels/<level_id>")
+        api.add_resource(CourseLevelNameApi, "/courses/levels/name/<level_name>")
+        api.add_resource(CourseLevelsApi, "/courses/levels")
+
+        api.add_resource(SearchUniApi, "/search/unis")
+        api.add_resource(SearchCourseApi, "/search/courses")
 
         api.add_resource(TopicIdApi, "/forum/topics/<topic_id>")
+        api.add_resource(TopicNameApi, "/forum/topics/name/<topic_name>")
         api.add_resource(TopicsApi, "/forum/topics")
         api.add_resource(TopicsInfoApi, "/forum/topics/info")
 
@@ -133,16 +148,12 @@ def create_app(config_class="config.DevConfig"):
         from src.currency.currency_routes import currency_routes
         from src.docs.docs_routes import docs_routes
 
-        # from src.api.api import SWAGGERUI_BLUEPRINT
-        # app.register_blueprint(
-        #    # SWAGGERUI_BLUEPRINT, url_prefix=app.config["SWAGGER_URL"]
-        #    SWAGGERUI_BLUEPRINT
-        # )
-
         app.register_blueprint(currency_routes)
         app.register_blueprint(docs_routes)
 
         # db.create_all()
+        print("db=====================================================")
+        print(db.engine.url.database)
 
         # @app.before_first_request
         # @with_appcontext
@@ -150,14 +161,16 @@ def create_app(config_class="config.DevConfig"):
         #    db.Base.metadata.create_all(bind=db.engine)
         # fill_tables(db.engine.url.database)
 
+        # db.Base.metadata.reflect(db.engine)
+        # db.Base.metadata.tables["users"].create(bind=db.engine)
+        # db.Base.metadata.tables["topics"].create(bind=db.engine)
+        # db.Base.metadata.tables["threads"].create(bind=db.engine)
+        # db.Base.metadata.tables["posts"].create(bind=db.engine)
         # fill_forum_tables(db.engine.url.database)
 
     @app.after_request
     def after_request(response: Response) -> Response:
-
-        if "Access-Control-Allow-Origin" not in response.headers:
-            response.headers.add("Access-Control-Allow-Origin", "*")
-
+        response.headers.add("Access-Control-Allow-Origin", "*")
         response.headers.add(
             "Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE"
         )
@@ -165,7 +178,8 @@ def create_app(config_class="config.DevConfig"):
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Headers", "Authorization")
         # response.headers.add("Access-Control-Allow-Headers", "Origin")
-
+        # response.access_control_allow_headers = "Origin, Content-Type"
+        # "Origin, X-Requested-With, Content-Type, Accept, Authorization"
         return response
 
     return app

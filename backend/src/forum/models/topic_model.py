@@ -1,6 +1,8 @@
 """topic table schema"""
 from main import db, ma
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey, Text, DateTime, Boolean
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 
 class Topic(db.Base):
@@ -13,10 +15,13 @@ class Topic(db.Base):
     slug = Column(String(255), unique=True)
 
     def __init__(self, topic: dict):
+        # self.uni_id = uni.get("uni_id")
         self.topic_name = topic.get("topic_name")
         self.description = topic.get("description")
         self.slug = topic.get("slug")
 
+    # def json(self):
+    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the topic.
@@ -37,11 +42,34 @@ class Topic(db.Base):
         )
 
 
+"""
+    @classmethod
+    def find_by_name(cls, name):
+        "find uni by name"
+        return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_by_id(cls, _id):
+        "find ini by id"
+        return cls.query.filter_by(id=_id).first()
+
+    def save_to_db(self):
+        db.session.add(self)
+        db.session.commit()
+"""
+
+
+# def json(self):
+#    return {"name":self.name,...}
+
+
 class TopicSchema(ma.Schema):
     """schema for Topic"""
 
     class Meta:
         model = Topic
+        # sqla_session = db.session
+        # load_instance = True
 
 
 topic_schema = TopicSchema()

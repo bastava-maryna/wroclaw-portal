@@ -19,6 +19,14 @@ from src.user.user_model import (
 from src.user.responses import response_with
 from src.user import code_constants as code
 
+# resource_fields = {
+#    "user_id": fields.Integer,
+#    "user_name": fields.String,
+#    "user_email": fields.String,
+#    "password": fields.String,
+#    "avatar": fields.String,
+# }
+
 
 class UserIdApi(Resource):
     @jwt_required()
@@ -90,12 +98,11 @@ class UserIdApi(Resource):
                     code.SERVER_ERROR_500, error="the user failed to update"
                 )
                 # or
-                # return Response({"error": "the user failed to update"},
-                # mimetype="application/json", status=500)
+                # return Response({"error": "the user failed to update"}, mimetype="application/json", status=500)
         else:
             return response_with(
                 code.BAD_REQUEST_400,
-                error="the user is equal to the existing user with the same id",
+                error="the post submitted is equal to the existing user with the same id",
             )
             # return Response(response, mimetype="application/json", status=400)
 
@@ -129,7 +136,6 @@ class UserIdApi(Resource):
 
 
 class UsersApi(Resource):
-    '''
     @jwt_required()
     def get(self):
         """
@@ -145,7 +151,6 @@ class UsersApi(Resource):
         return response_with(code.SUCCESS_200, value={"users": users_dumped})
         # or
         # return Response(response=res, mimetype="application/json", status=200)
-    '''
 
     def post(self):
         """
@@ -193,6 +198,16 @@ class UsersApi(Resource):
 
 
 class UserAuthApi(Resource):
+    def get(self, user_name):
+        """
+        Get all the user in the database by unique name.
+        :return: A response object for the GET API request.
+        """
+        print("in routes///////////////////")
+        user: User = UserDao.get_user_by_user_name(user_name)
+        # ??? what if not found
+        return user
+
     # login user
     def post(self):
         """
@@ -201,7 +216,7 @@ class UserAuthApi(Resource):
         """
         try:
             user_data: dict = request.get_json()
-            print(user_data)
+
             if not user_data["user_name"] or not user_data["password"]:
                 return response_with(
                     code.MISSING_PARAMETERS_422,
@@ -209,8 +224,7 @@ class UserAuthApi(Resource):
                 )
 
             user_from_db = UserDao.get_user_by_user_name(user_data["user_name"])
-            print("user_from_db")
-            print(user_from_db)
+
             if not user_from_db:
                 return response_with(
                     code.UNAUTHORIZED_403,
@@ -240,7 +254,7 @@ class UserAuthApi(Resource):
         except Exception as e:
             print(e)
             # return "422"
-            return response_with(code.SERVER_ERROR_500, error=str(e))
+            return response_with(code.SERVER_ERROR_500, error=e)
 
 
 # "/refresh"

@@ -50,8 +50,10 @@ class Course(db.Base):
         self.main_discipline = course.get("main_discipline")
         self.institution = course.get("institution")
 
-    def to_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+    # def json(self):
+    #  return {
+    # 'name':self.name,"study_disciplines"=[study_discipline.json()
+    # for study_discipline in self.study_disciplines.all()]}
 
     def __repr__(self):
         """
@@ -85,20 +87,7 @@ class CourseSchema(ma.Schema):
         model = Course
         # sqla_session = db.session
         # load_instance = True
-        fields = (
-            "course_id",
-            "course_uid",
-            "course_name",
-            "course_isced_name",
-            "level",
-            "title",
-            "form",
-            "language",
-            "semesters_number",
-            "ects",
-            "main_discipline",
-            "institution",
-        )
+        # fields = ["level"]
 
 
 course_schema = CourseSchema()

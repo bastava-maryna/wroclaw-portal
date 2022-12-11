@@ -5,6 +5,8 @@ from main import db
 from typing import List
 
 from src.uni.dao.basic_dao import BasicDao
+from src.forum.models.thread_model import Thread
+from src.user.user_model import User
 from src.forum.models.post_model import Post
 
 
@@ -89,6 +91,7 @@ class PostDao:
     def get_posts_count(self, thread_id: int):
         return Post.query.filter_by(thread_id=thread_id).count()
 
+    #!!!! need correct
     @staticmethod
     def get_posts_by_thread(thread_id: int) -> list:
         """
@@ -96,15 +99,53 @@ class PostDao:
         :param topic_id: The unique identifier for a topic.
         :return: The result of the query.
         """
+        """
+        result = (
+            db.session.execute(
+                f"WITH threadpost AS "
+                f"(SELECT topic, thread_id, count(post_id) AS post_count "
+                f"FROM threads JOIN posts ON thread_id=thread GROUP BY thread_id) "
+                f"SELECT g.*, u1.user_name AS thread_creator_name, u2.user_name AS post_creator_name, post_count "
+                f"FROM "
+                f"(SELECT p.*, thread_name, thread_created_at, thread_creator, thread_content,pinned,topic "
+                f"FROM "
+                f"(SELECT post_id, post_created_at, post_creator, thread AS thread_id, "
+                f"row_number() OVER (PARTITION BY thread ORDER BY post_created_at DESC) AS rn "
+                f"FROM posts) AS p "
+                f"JOIN threads ON threads.thread_id=p.thread_id where rn=1) AS g "
+                f"JOIN threadpost ON threadpost.thread_id=g.thread_id "
+                f"JOIN users AS u1 ON u1.user_id=g.thread_creator "
+                f"JOIN users AS u2 ON u2.user_id=g.post_creator "
+                f"WHERE g.topic={topic_id} "
+                f"ORDER BY post_created_at DESC"
+            )
+            .mappings()
+            .all()
+        )
+        """
+        # result = Post.query.filter_by(thread=thread_id).all()
 
         result = db.session.execute(
             f"SELECT thread_id,thread_creator, post_id,post_content, "
-            f"post_created_at,post_updated_at,post_creator, "
-            f"u2.user_name as post_creator_name, u2.avatar as avatar "
+            f"post_created_at,post_updated_at,post_creator,u2.user_name as post_creator_name, u2.avatar as avatar "
             f"FROM threads JOIN posts ON thread_id=thread "
             f"JOIN users AS u2 ON u2.user_id=post_creator "
             f"WHERE thread_id=:thread_id",
             {"thread_id": thread_id},
         ).fetchall()
+
+        # res = (
+        #    db.session.query(Thread, User)
+        #    .filter_by(topic=topic_id)
+        #    .join(User, Thread.thread_creator == User.user_id)
+        #    .add_columns(Thread.thread_id, Thread.thread_name, User.user_name)
+        # .order_by(Thread.thread_created_at)
+        #    .all()
+        # )
+        print("result from dao///////////////////////////////////////////////////")
+        print(result)
+        # for r in res:
+        #    print(r)
+        #    print(r.Thread.thread_id)
 
         return result

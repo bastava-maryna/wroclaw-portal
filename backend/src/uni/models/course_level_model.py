@@ -16,6 +16,8 @@ class CourseLevel(db.Base):
     def __init__(self, course_level_name: str):
         self.course_level_name = course_level_name
 
+    # def json(self):
+    #  return {'name':self.name,...}
     def __repr__(self):
         """
         String representation of the course level.
@@ -41,7 +43,6 @@ class CourseLevelSchema(ma.Schema):
 
     class Meta:
         model = CourseLevel
-        fields = ("course_level_id", "course_level_name")
 
 
 course_level_schema = CourseLevelSchema()

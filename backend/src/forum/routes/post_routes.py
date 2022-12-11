@@ -4,6 +4,7 @@ from flask_restful import Resource, fields, marshal_with
 from flask import Response, request
 from flask.json import jsonify
 from src.forum.dao.post_dao import PostDao
+from src.forum.dao.thread_dao import ThreadDao
 from src.forum.models.post_model import Post
 from flask_jwt_extended import jwt_required
 from src.forum.models.post_model import (
@@ -24,7 +25,6 @@ resource_fields = {
 
 class PostIdApi(Resource):
     @marshal_with(resource_fields)
-    @jwt_required()
     def get(self, post_id):
         """
         Get a single post with a unique ID.
@@ -32,22 +32,37 @@ class PostIdApi(Resource):
         :return: A response object for the GET API request.
         """
         post = PostDao.get_post_by_id(post_id=post_id)
-
-        if post is None:
+        print(type(post))
+        print(post)
+        return post
+        """
+        if thread is None:
             response = jsonify(
                 {
-                    "self": f"/posts/{post_id}",
-                    "post": None,
-                    "error": "there is no post with this identifier",
+                    "self": f"/threads/{thread_id}",
+                    "thread": None,
+                    # "log": None,
+                    "error": "there is no thread with this identifier",
                 }
             )
             response.status_code = 400
             return response
         else:
-            return post
-            # return Response(response, mimetype="application/json", status=200)
+            thread_dict: dict = Thread(thread).__dict__
+            # comment_dict["time"] = str(comment_dict["time"])
 
-    @jwt_required()
+            response = jsonify(
+                {
+                    "self": f"/threads/{thread_id}",
+                    "thread": thread_dict,
+                    # "log": f'/v2/logs/{comment_dict.get("log_id")}',
+                }
+            )
+            # response.status_code = 200
+            # return response
+            return Response(response, mimetype="application/json", status=200)
+        """
+
     def put(self, post_id):
         """
         Update an existing post.
@@ -105,13 +120,12 @@ class PostIdApi(Resource):
                     "self": f"/posts/{post_id}",
                     "updated": False,
                     "post": None,
-                    "error": "the post is equal to the existing post with the same id",
+                    "error": "the post submitted is equal to the existing post with the same id",
                 }
             )
 
             return Response(response, mimetype="application/json", status=400)
 
-    @jwt_required()
     def delete(self, post_id):
         """
         Delete an existing post.
@@ -156,7 +170,6 @@ class PostIdApi(Resource):
 
 class PostsApi(Resource):
     @marshal_with(resource_fields)
-    @jwt_required()
     def get(self):
         """
         Get all the posts in the database.
@@ -165,27 +178,55 @@ class PostsApi(Resource):
         print("in routes///////////////////")
         posts: list = PostDao.get_posts()
 
-        if posts is None:
+        return posts
+        """
+        if disciplines is None:
             response = jsonify(
                 {
-                    "self": "/posts",
-                    "posts": None,
-                    "error": "an unexpected error occurred retrieving posts",
+                    "self": "/disciplines",
+                    "disciplines": None,
+                    "error": "an unexpected error occurred retrieving disciplines",
                 }
             )
 
             return Response(response, mimetype="application/json", status=500)
         else:
-            return posts
+            disc_dicts = [Discipline(disc).__dict__ for disc in disciplines]
+
+            # for voiv_dict in voiv_dicts:
+            #    voiv_dict["log"] = f'/v2/logs/{comment_dict.get("log_id")}'
+
+            response = jsonify({"self": "/disciplines", "disciplines": disc_dicts})
+
+            return Response(response, mimetype="application/json", status=200)
+        """
 
     @marshal_with(resource_fields)
-    @jwt_required()
     def post(self):
+        # if Voivodeship.objects.get(name=name):
+        #    return {
+        #        "message": "A voivodeship with name '{} already exists.".format(name)
+        #    }, 400
+
+        # data = Uni.parser.parse_args()
+
+        # uni = UniModel(name, data["price"])
+
+        # try:
+        #    uni.save_to_db()
+        # except:
+        #    return {"message": "An error occured inserting the item"}, 500
+
+        # return uni.json(), 201
         """
         Create a new post.
         :return: A response object for the POST API request.
         """
         post_data: dict = request.get_json()
+        print("post_data from request")
+        print(post_data)
+        print(type(post_data))
+        print(type(post_data["post_content"]))
 
         if post_data is None:
             response = jsonify(
@@ -200,12 +241,21 @@ class PostsApi(Resource):
             return response
         post_to_add = Post(post_data)
 
+        print("post to add")
+        print(post_to_add)
+        print(type(post_to_add))
+
         post_added_successfully: bool = PostDao.add_post(new_post=post_to_add)
+        print(post_added_successfully)
 
         if post_added_successfully:
             post_added = PostDao.get_post_by_id(post_to_add.post_id)
+            print("post added type")
+            print(type(post_added))
             post_added_dict: dict = post_added.to_dict()
 
+            print("post_added_dict")
+            print(post_added_dict)
             response = jsonify(
                 {
                     "self": "/posts",
@@ -213,7 +263,8 @@ class PostsApi(Resource):
                     "post": post_added_dict,
                 }
             )
-
+            print(response)
+            # return post_added_dict, 200
             return Response(post_added_dict, mimetype="application/json", status=200)
         else:
             response = jsonify(
@@ -261,17 +312,20 @@ class PostsByThreadApi(Resource):
     }
 
     @marshal_with(resource_fields)
-    @jwt_required()
+    # @jwt_required()
     def get(self, thread_id: int):
         """
         Get all the posts by thread in the database.
         :return: A response object for the GET API request.
         """
-        print("in post by thread routes///////////////////")
+        print("in routes///////////////////")
 
         posts: list = PostDao.get_posts_by_thread(thread_id)
+        print(type(posts))
+        print(posts)
+        for post in posts:
+            print(post)
 
         # res = threads_schema.dump(threads)
         # print(res)
         return posts
-        # return Response(posts, mimetype="application/json", status=200)

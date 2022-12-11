@@ -30,6 +30,7 @@ class User(db.Base):
     password = Column(String(100), nullable=False)
     avatar = Column(Text)
     # role = Column(Enum(Role))
+    # created_on=Column(DateTime(timezone=True), server_default=func.now())
     # last_login=Column(DateTime(timezone=True), onupdate=func.now())
     threads = relationship(
         "Thread", backref="Tread", lazy="dynamic", cascade="all,delete-orphan"
@@ -45,13 +46,13 @@ class User(db.Base):
     def to_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
-    # def json(self):
-    #    return {
-    #        "user_id": self.user_id,
-    #        "user_name": self.user_name,
-    #        "user_email": self.user_email,
-    #        "avatar": self.avatar,
-    #    }
+    def json(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "user_email": self.user_email,
+            "avatar": self.avatar,
+        }
 
     def __repr__(self):
         """
@@ -92,7 +93,6 @@ class UserSchema(ma.Schema):
     # threads = fields.Nested(ThreadSchema, many=True)
 
 
-'''
 class UserShortSchema(ma.Schema):
     """schema for User without password"""
 
@@ -102,7 +102,7 @@ class UserShortSchema(ma.Schema):
 
     fields = ("user_name", "user_email", "avatar")
 
-'''
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
-# user_short_schema = UserShortSchema()
+user_short_schema = UserShortSchema()
