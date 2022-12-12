@@ -236,6 +236,7 @@ class ThreadsByTopicApi(Resource):
         "thread_created_at": fields.String,
         "thread_creator_name": fields.String,
         "thread_creator_avatar": fields.String,
+        "thread_creator": fields.Integer,
         "post_count": fields.Integer,
         "pinned": fields.Boolean,
         # "last_activity": fields.Nested(thread_last_activity_fields),

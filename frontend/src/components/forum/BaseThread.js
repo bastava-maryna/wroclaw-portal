@@ -14,6 +14,7 @@ const BaseThread = ({ thread, topic }) => {
     thread_creator_name,
     thread_created_at,
     thread_creator_avatar,
+    thread_creator,
     //naturaltime,
     post_count,
     last_activity,
@@ -55,12 +56,12 @@ const BaseThread = ({ thread, topic }) => {
         className="forum-avatar"
         avatar={last_activity.post_creator_avatar}
         centered={false}
-        link={`/user/${last_activity.post_creator_name}`}
+        link={`/users/${last_activity.post_creator}`}
       />
       <div className="forum-column">
         <div className="forum-name">{last_activity.post_creator_name}</div>
         <div className="forum-meta">
-          <Link to={`/user/${last_activity.post_creator_name}`}>
+          <Link to={`/users/${last_activity.post_creator}`}>
             <Icon name="user" />
             {last_activity.post_creator_name}
           </Link>
@@ -82,7 +83,7 @@ const BaseThread = ({ thread, topic }) => {
                 className="forum-avatar"
                 avatar={thread_creator_avatar}
                 centered={false}
-                link={`/user/${thread_creator_name}`}
+                link={`/users/${thread_creator}`}
               />
               <div className="forum-column">
                 <div>
@@ -92,7 +93,7 @@ const BaseThread = ({ thread, topic }) => {
                   </Link>
                 </div>
                 <div className="forum-meta">
-                  <Link to={`/user/${thread_creator_name}`}>
+                  <Link to={`/users/${thread_creator}`}>
                     <Icon name="user" />
                     {thread_creator_name}
                   </Link>

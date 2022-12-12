@@ -25,7 +25,7 @@ const ForumScreen = () => {
       <Header size="huge" color="violet" className="forum-header">
         Wroclaw Portal Topics
       </Header>
-      <TopicList isLoading={isLoading} error={error} topics={topics} />;
+      <TopicList isLoading={isLoading} error={error} topics={topics} />
     </>
   );
 };
