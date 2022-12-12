@@ -230,6 +230,20 @@ def fill_tables(db):
     conn = sqlite3.connect(db, detect_types=sqlite3.PARSE_DECLTYPES)
     cursor = conn.cursor()
 
+    # firstly delete old data
+    cursor.execute(CONST.DELETE_COURSE_FORMS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSE_TITLES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSE_LANGUAGES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSE_LEVELS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_COURSES_DISCIPLINES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_DISCIPLINES_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_UNI_KINDS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_UNIS_TABLE_QUERY)
+    cursor.execute(CONST.DELETE_VOIVODESHIPS_TABLE_QUERY)
+    conn.commit()
+    print("old data deleted-------------------------------------------------")
+
     loaded_dictionaries = load_dictionaries(data_to_load_dict)
 
     for k, v in data_to_load_dict.items():
@@ -263,5 +277,10 @@ def fill_tables(db):
     print(
         "courses disciplines joint table filled ======================================"
     )
+
+    # populate forum topics table
+    cursor.execute(CONST.FILL_TOPICS_QUERY)
+    conn.commit()
+    print("topics table filled ======================================")
 
     conn.close()

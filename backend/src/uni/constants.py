@@ -58,3 +58,22 @@ INSTITUTION_DATA_COUNTRY_FILTER = "Polska"
 INSTITUTION_DATA_KIND_FILTER = 16
 """load only actual courses data (status=3 means prowadzone - active)"""
 COURSE_DATA_STATUS_FILTER = "3"
+
+DELETE_COURSE_FORMS_TABLE_QUERY = "DELETE FROM course_forms"
+DELETE_COURSE_LEVELS_TABLE_QUERY = "DELETE FROM course_levels"
+DELETE_COURSE_LANGUAGES_TABLE_QUERY = "DELETE FROM course_languages"
+DELETE_COURSE_TITLES_TABLE_QUERY = "DELETE FROM course_titles"
+DELETE_COURSES_TABLE_QUERY = "DELETE FROM courses"
+DELETE_COURSES_DISCIPLINES_TABLE_QUERY = "DELETE FROM courses_disciplines"
+DELETE_DISCIPLINES_TABLE_QUERY = "DELETE FROM disciplines"
+DELETE_UNI_KINDS_TABLE_QUERY = "DELETE FROM uni_kinds"
+DELETE_UNIS_TABLE_QUERY = "DELETE FROM unis"
+DELETE_VOIVODESHIPS_TABLE_QUERY = "DELETE FROM voivodeships"
+
+FILL_TOPICS_QUERY = (
+    f"INSERT INTO 'topics' VALUES "
+    f"('Forum rules and feedback','Contain rules about wruting posts on forum and feddbacks from users','forum-rules-and-feedback'),"
+    f"('All about Wroclaw universities','Contain information about universities in Wroslaw','all-about-wroclaw-universities'),"
+    f"('Shopping in Wroclaw','Contain information about shopping in Wroslaw','shopping-in-wroclaw'),"
+    f"('Legalization process','Contain information about shopping in Wroslaw','legalization-process')",
+)
