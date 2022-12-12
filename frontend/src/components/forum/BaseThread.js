@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React from 'react';
 import { parseISO, toDate, intervalToDuration, formatDuration } from 'date-fns';
 //import { toDate, format } from 'date-fns-tz';
@@ -7,7 +6,7 @@ import { Segment, Grid, Icon } from 'semantic-ui-react';
 import Avatar from './Avatar';
 import './style.css';
 
-const BaseThread = ({ thread }) => {
+const BaseThread = ({ thread, topic }) => {
   const {
     thread_id,
     thread_name,
@@ -15,11 +14,12 @@ const BaseThread = ({ thread }) => {
     thread_creator_name,
     thread_created_at,
     thread_creator_avatar,
+    thread_creator,
     //naturaltime,
     post_count,
     last_activity,
   } = thread;
-
+  const { topic_id } = topic;
   const thread_name_corrected =
     thread_name.length > 57
       ? thread_name.substring(0, 55) + '...'
@@ -56,12 +56,12 @@ const BaseThread = ({ thread }) => {
         className="forum-avatar"
         avatar={last_activity.post_creator_avatar}
         centered={false}
-        link={`/user/${last_activity.post_creator_name}`}
+        link={`/users/${last_activity.post_creator}`}
       />
       <div className="forum-column">
         <div className="forum-name">{last_activity.post_creator_name}</div>
         <div className="forum-meta">
-          <Link to={`/user/${last_activity.post_creator_name}`}>
+          <Link to={`/users/${last_activity.post_creator}`}>
             <Icon name="user" />
             {last_activity.post_creator_name}
           </Link>
@@ -83,19 +83,19 @@ const BaseThread = ({ thread }) => {
                 className="forum-avatar"
                 avatar={thread_creator_avatar}
                 centered={false}
-                link={`/user/${thread_creator_name}`}
+                link={`/users/${thread_creator}`}
               />
               <div className="forum-column">
                 <div>
                   <Icon name={pinned ? 'pin' : 'comment alternate outline'} />
-                  <Link to={`/forum/threads/${thread.thread_id}`}>
+                  <Link to={`/forum/${topic_id}/threads/${thread_id}`}>
                     {thread_name_corrected}
                   </Link>
                 </div>
                 <div className="forum-meta">
-                  <Link to={`/user/${last_activity.post_creator_name}`}>
+                  <Link to={`/users/${thread_creator}`}>
                     <Icon name="user" />
-                    {last_activity.post_creator_name}
+                    {thread_creator_name}
                   </Link>
                   <b> - {thread_date_humanized} ago</b>
                 </div>

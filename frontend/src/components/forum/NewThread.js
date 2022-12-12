@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { getSelectedBlock } from 'draftjs-utils';
@@ -53,20 +52,6 @@ export default class NewThread extends Component {
 
   toggleShowEditor = () => {
     this.props.toggleShowEditor();
-  };
-
-  //????
-  onSave = () => {
-    // save to redux store (uncontrolled input way)
-    const { thread_name, editorState } = this.state;
-    const thread_content = JSON.stringify(
-      convertToRaw(editorState.getCurrentContent())
-    );
-    this.props.updateNewThread({
-      thread_name: thread_name,
-      thread_content: thread_content,
-    });
-    this.toggleShowEditor();
   };
 
   onCancel = () => {
@@ -252,16 +237,7 @@ export default class NewThread extends Component {
             <Icon name="edit" />
             Post thread
           </Button>
-          <Button
-            color="red"
-            role="none"
-            size="small"
-            disabled={isLoading}
-            onClick={this.onSave}
-          >
-            <Icon name="save" />
-            Save Draft
-          </Button>
+
           <Button
             role="none"
             size="small"

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import axios from 'axios';
 import { errorHandler } from '../../errorHandler';
 
@@ -132,6 +131,64 @@ export const authHeader = () => {
     return {};
   }
 };
+/*
+export function fetchThread(dispatch, thread_id) {
+  dispatch(fetchThreadRequest());
+
+  //fetchThreadApi(thread)
+  axios
+    .get(`${API_URL}/forum/threads/${thread_id}/info`, {
+      headers: authHeader(),
+    })
+    .then((response) => {
+      console.log('in fetch thread action');
+      console.log(response);
+      dispatch(fetchThreadSuccess(response.data));
+    })
+    .catch((error) => {
+      const errorMessage = errorHandler(error);
+      dispatch(fetchThreadFailure(errorMessage));
+    });
+  axios
+    .get(`${API_URL}/forum/threads/${thread_id}/posts`, {
+      headers: authHeader(),
+    })
+    .then((response) => {
+      console.log('in fetch thread post action');
+      console.log(response);
+      dispatch(fetchThreadPostSuccess(response.data));
+    })
+    .catch((error) => {
+      const errorMessage = errorHandler(error);
+      dispatch(fetchThreadFailure(errorMessage));
+    });
+}
+*/
+export const fetchThreadRequest = () => {
+  return {
+    type: 'FETCH_THREAD_REQUEST',
+  };
+};
+
+export const fetchThreadSuccess = (thread) => {
+  return {
+    type: 'FETCH_THREAD_SUCCESS',
+    thread,
+  };
+};
+export const fetchThreadPostSuccess = (posts) => {
+  return {
+    type: 'FETCH_THREAD_POST_SUCCESS',
+    posts,
+  };
+};
+
+export const fetchThreadFailure = (error) => {
+  return {
+    type: 'FETCH_THREAD_FAILURE',
+    error,
+  };
+};
 
 export async function createThread(dispatch, newThread) {
   dispatch(createThreadRequest(newThread));
@@ -206,8 +263,12 @@ export async function deleteThread(dispatch, thread_id) {
 
   //deleteThreadApi(id)
   axios
-    .delete(`${API_URL}/forum/threads/${thread_id}`)
+    .delete(`${API_URL}/forum/threads/${thread_id}`, {
+      headers: authHeader(),
+    })
     .then((response) => {
+      console.log('in delete thread action');
+      console.log(response);
       dispatch(deleteThreadSuccess());
 
       // re-load thread page
@@ -217,10 +278,14 @@ export async function deleteThread(dispatch, thread_id) {
           headers: authHeader(),
         })
         .then((response) => {
+          console.log('in delete thread reload thread action');
+          console.log(response);
           dispatch(fetchThreadSuccess(response.data));
         })
         .catch((error) => {
           const errorMessage = errorHandler(error);
+          console.log('error message in delete');
+          console.log(errorMessage);
           dispatch(fetchThreadFailure(errorMessage));
         });
     })
@@ -255,7 +320,7 @@ export const fetchTopicSuccess = (topic) => {
     name: topic.name,
     //slug: topic.slug,
     //description: topic.description,
-    //threads: topic.threads,
+    threads: topic,
   };
 };
 
@@ -267,18 +332,15 @@ export const fetchTopicFailure = (error) => {
 };
 
 //----------posts
-//export const createPost = newPost => dispatch => {
 export async function createPost(dispatch, newPost) {
   dispatch(createPostRequest());
 
-  //createPostApi(newPost)
   axios
-    //.post(`${API_URL}/forum/posts`, newPost, { headers: authHeader() })
     .post(`${API_URL}/forum/posts`, newPost, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      //'Access-Control-Allow-Origin': '*',
+      //headers: {
+      //  'Content-Type': 'application/json',
+      //},
+      headers: authHeader(),
     })
     .then((response) => {
       console.log('in create post action, response');
@@ -286,16 +348,11 @@ export async function createPost(dispatch, newPost) {
       dispatch(createPostSuccess());
 
       // re-load thread page
-      //fetchThreadApi(newPost.thread_id)
       axios
         .get(`${API_URL}/forum/threads/${newPost.thread}/posts`, {
           headers: authHeader(),
         })
         .then((response) => {
-          console.log(
-            'in /forum/threads/${newPost.thread_id}/posts ,response.data'
-          );
-          console.log(response.data);
           dispatch(fetchThreadSuccess(response.data));
         })
         .catch((error) => {
@@ -328,17 +385,17 @@ export const createPostFailure = (error) => {
   };
 };
 
-//export const deletePost = (id, threadID) => (dispatch) => {
 export async function deletePost(dispatch, post_id, thread_id) {
   dispatch(deletePostRequest(post_id));
 
   axios
-    .delete(`${API_URL}/forum/posts/${post_id}`)
+    .delete(`${API_URL}/forum/posts/${post_id}`, {
+      headers: authHeader(),
+    })
     .then((response) => {
       dispatch(deletePostSuccess(post_id));
 
       // re-load thread page
-      //fetchThreadApi(threadID);
       axios
         .get(`${API_URL}/forum/threads/${thread_id}/posts`, {
           headers: authHeader(),
@@ -375,20 +432,6 @@ export const deletePostFailure = (id, error) => {
   return {
     type: 'DELETE_POST_FAILURE',
     id,
-    error,
-  };
-};
-
-export const fetchThreadSuccess = (thread) => {
-  return {
-    type: 'FETCH_THREAD_SUCCESS',
-    thread,
-  };
-};
-
-export const fetchThreadFailure = (error) => {
-  return {
-    type: 'FETCH_THREAD_FAILURE',
     error,
   };
 };

@@ -1,5 +1,4 @@
-/* eslint-disable prettier/prettier */
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Segment, Icon } from 'semantic-ui-react';
 import StatusMessage from './StatusMessage';
 import Post from './Post';
@@ -7,47 +6,52 @@ import NewPost from './NewPost';
 import AuthContext from '../../context/auth/AuthContext';
 
 const Thread = ({
-  //isLoading,
-  //error,
-  isDeleting,
-  deleteError,
+  //isDeleting,
+  //deleteError,
   thread,
   posts,
   createPost,
   deletePost,
   deleteThread,
 }) => {
-  const { dispatch, isAuthenticated, isLoading, error, user } =
-    useContext(AuthContext);
+  const {
+    dispatch,
+    isAuthenticated,
+    isLoading,
+    error,
+    user,
+    isDeleting,
+    deleteError,
+    deletePostList,
+    name,
+  } = useContext(AuthContext);
   const {
     thread_id,
     thread_name,
     thread_content,
     thread_created_at,
-    thread_creator,
+    //thread_creator,
     pinned,
     avatar,
     user_name,
-    user_email,
+    //user_email,
   } = thread;
 
-  //const tread_creator = { avatar, user_name, user_email };
-  const { newPost, setNewPost } = useState([]);
-  const { postsList, setPostsList } = useState([]);
-
-  if (error || deleteError || isLoading || isDeleting || !thread_name) {
+  if (error || deleteError || isLoading || isDeleting || !name) {
     let loadingMessage = 'We are fetching the thread for you';
     if (isDeleting) {
       loadingMessage = 'We are deleting the thread for you';
     }
+    console.log('!name');
+    console.log(!name);
     return (
       <StatusMessage
-        error={error || deleteError || !thread_name} // because a thread name cannot be empty
+        error={error || deleteError || !name} // because a thread name cannot be empty
         errorClassName="thread-error"
         errorMessage={error || deleteError}
         loading={isLoading || isDeleting}
         loadingMessage={loadingMessage}
-        nothing={!thread_name}
+        nothing={!name}
         nothingMessage={'Thread does not exist'}
         type="default"
       />
@@ -61,14 +65,12 @@ const Thread = ({
       isThread={true}
       content={thread_content}
       createdAt={thread_created_at}
-      //creator={thread_creator}
       creator={user_name}
       creator_name={user_name}
       avatar={avatar}
-      //authenticatedUsername={authenticatedUsername}
-      //authenticatedIsStaff={authenticatedIsStaff}
       deleteAction={deleteThread}
       dispatch={dispatch}
+      authenticatedUserName={user?.user_name}
     />
   );
 
@@ -93,10 +95,9 @@ const Thread = ({
               creator={post.post_creator}
               creator_name={post.post_creator_name}
               authenticatedUser={user}
+              authenticatedUserName={user?.user_name}
               avatar={post.avatar}
-              //authenticatedUsername={authenticatedUsername}
-              //authenticatedIsStaff={authenticatedIsStaff}
-              //deletePostList={deletePostList}
+              deletePostList={deletePostList}
               deleteAction={deletePost}
               dispatch={dispatch}
             />
@@ -106,6 +107,7 @@ const Thread = ({
         isAuthenticated={isAuthenticated}
         threadID={thread_id}
         authenticatedUser={user}
+        authenticatedUserName={user?.user_name}
         createPost={createPost}
         //success={newPostSuccess}
         //isLoading={newPostLoading}

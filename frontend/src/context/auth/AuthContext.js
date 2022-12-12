@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { createContext, useReducer } from 'react';
 import authReducer from '../auth/AuthReducer';
 
@@ -33,11 +32,13 @@ export const AuthProvider = ({ children }) => {
     isDeleting: false, //about tread
     deleteError: null, //about thread
     curThread: null,
+    name: null,
     posts: [],
     newPostLoading: true,
     newPostError: null,
     newPostSuccess: false,
     deletePostList: [],
+    threads: null,
   };
 
   const [state, dispatch] = useReducer(authReducer, initialState);

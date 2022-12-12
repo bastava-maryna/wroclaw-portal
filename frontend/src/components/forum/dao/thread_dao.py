@@ -91,7 +91,10 @@ class ThreadDao:
                 thread_name=:thread_name,
             WHERE thread_id=:thread_id
             """,
-            {"thread_id": thread.thread_id, "thread_name": thread.thread_name,},
+            {
+                "thread_id": thread.thread_id,
+                "thread_name": thread.thread_name,
+            },
         )
         return BasicDao.safe_commit()
 
@@ -103,7 +106,8 @@ class ThreadDao:
         :return: True if the deletion was successful without error, False otherwise.
         """
         db.session.execute(
-            "DELETE FROM threads WHERE thread_id=:thread_id", {"thread_id": thread_id},
+            "DELETE FROM threads WHERE thread_id=:thread_id",
+            {"thread_id": thread_id},
         )
         return BasicDao.safe_commit()
 

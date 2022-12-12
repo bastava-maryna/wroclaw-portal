@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import { Icon, Message } from 'semantic-ui-react';
 import Loader from './Loader';

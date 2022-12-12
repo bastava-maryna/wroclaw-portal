@@ -25,11 +25,13 @@ db = Database()
 migrate = Migrate()
 ma = Marshmallow()
 QAmodel = AutoModelForQuestionAnswering.from_pretrained(
-    "moska/deepset_bert-base-uncased-squad2_trained",use_auth_token="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"
+    "moska/deepset_bert-base-uncased-squad2_trained",
+    use_auth_token="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",
 )
 sentence_model = SentenceTransformer("sentence-transformers/LaBSE")
 tokenizer = AutoTokenizer.from_pretrained(
-   "moska/deepset_bert-base-uncased-squad2_trained",use_auth_token="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"
+    "moska/deepset_bert-base-uncased-squad2_trained",
+    use_auth_token="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",
 )
 
 jwt = JWTManager()
@@ -156,20 +158,20 @@ def create_app(config_class="config.DevConfig"):
         # def create_tables():
         #    db.Base.metadata.create_all(bind=db.engine)
         # fill_tables(db.engine.url.database)
-# delete everything from database, then run once, then comment it out
+    # delete everything from database, then run once, then comment it out
 
-
-
-        # db.Base.metadata.reflect(db.engine)
-        # db.Base.metadata.tables["users"].create(bind=db.engine)
-        # db.Base.metadata.tables["topics"].create(bind=db.engine)
-        # db.Base.metadata.tables["threads"].create(bind=db.engine)
-        # db.Base.metadata.tables["posts"].create(bind=db.engine)
-        # fill_forum_tables(db.engine.url.database)
+    # db.Base.metadata.reflect(db.engine)
+    # db.Base.metadata.tables["users"].create(bind=db.engine)
+    # db.Base.metadata.tables["topics"].create(bind=db.engine)
+    # db.Base.metadata.tables["threads"].create(bind=db.engine)
+    # db.Base.metadata.tables["posts"].create(bind=db.engine)
+    # fill_forum_tables(db.engine.url.database)
 
     @app.after_request
     def after_request(response: Response) -> Response:
-        response.headers.add("Access-Control-Allow-Origin", "*")
+        if "Access-Control-Allow-Origin" not in response.headers:
+            response.headers.add("Access-Control-Allow-Origin", "*")
+
         response.headers.add(
             "Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE"
         )
@@ -177,18 +179,19 @@ def create_app(config_class="config.DevConfig"):
         response.headers.add("Access-Control-Allow-Headers", "Content-Type")
         response.headers.add("Access-Control-Allow-Headers", "Authorization")
         # response.headers.add("Access-Control-Allow-Headers", "Origin")
-        # response.access_control_allow_headers = "Origin, Content-Type"
-        # "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+
         return response
 
     from src.currency.currency_routes import currency_routes
     from src.docs.docs_routes import docs_routes
     from src.map.map_routes import map_routes
     from src.qa.qa_routes import qa_routes
+
     app.register_blueprint(currency_routes)
     app.register_blueprint(map_routes, url_prefix="/map")
     app.register_blueprint(docs_routes)
     app.register_blueprint(qa_routes)
     from src.news.news_routes import news_routes
+
     app.register_blueprint(news_routes)
     return app

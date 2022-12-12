@@ -14,11 +14,11 @@ COURSE_LEVELS_DATA_URL = UNI_DATA_API_URL + "/dictionaries/course/levels"
 COURSE_TITLES_DATA_URL = UNI_DATA_API_URL + "/dictionaries/course/professionalTitles"
 COURSE_FORMS_DATA_URL = UNI_DATA_API_URL + "/dictionaries/course/instanceForms"
 COURSE_LANGUAGES_DATA_URL = (
-    UNI_DATA_API_URL + "/dictionaries/course/philologicalLanguages"
+    UNI_DATA_API_URL / +"/dictionaries/course/philologicalLanguages"
 )
 DISCIPLINES_DATA_URL = UNI_DATA_API_URL + "/dictionaries/shared/disciplines"
 COURSES_DATA_URL = UNI_DATA_API_URL + "/courses"
-INSTITUTIONS_DATA_URL =UNI_DATA_API_URL + "/institutions"
+INSTITUTIONS_DATA_URL = UNI_DATA_API_URL + "/institutions"
 
 
 """sql querise to fill database tables"""
