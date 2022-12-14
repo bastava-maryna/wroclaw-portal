@@ -7,7 +7,9 @@ Installed [git](https://git-scm.com/download/win)
 
 Installed docker, preferably [docker desktop](https://docs.docker.com/desktop/install/windows-install/)
 
-5GB of free disk space
+Linux Kernel [update package](https://learn.microsoft.com/en-us/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package) installed
+
+10GB of free disk space (docker containers eat up a lot of space)
 
 Available port 3000 and 5000
 
@@ -28,4 +30,4 @@ cd wroclaw-portal
 docker compose up
 ```
 5. After the command will finish execution, there should be two new containers created running at the moment, visible in the docker desktop
-6. To open application, open localhost:3000 on your browser
+6. To open application, open localhost:3000 on your browser. Sometimes, there might be a short delay before the frontend and backend container will start communication.
